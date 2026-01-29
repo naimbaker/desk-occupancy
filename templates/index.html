@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desk Occupancy Detection</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .video-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .video-feed {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+        }
+        
+        .desk-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .desk-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .desk-card.occupied {
+            border: 3px solid #ef4444;
+            background: #fee;
+        }
+        
+        .desk-card.available {
+            border: 3px solid #22c55e;
+            background: #efe;
+        }
+        
+        .desk-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .desk-status {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .desk-status.occupied {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .desk-status.available {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .desk-icon {
+            font-size: 3em;
+            margin: 10px 0;
+        }
+        
+        .people-count {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .summary-title {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .summary-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #0ea5e9;
+            margin: 10px 0;
+        }
+        
+        .timestamp {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .desk-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪑 Desk Occupancy Detection System</h1>
+        
+        <div class="main-grid">
+            <div class="video-container">
+                <h2 style="margin-bottom: 15px; color: #333;">Live Camera Feed</h2>
+                <img src="{{ url_for('video_feed') }}" class="video-feed" alt="Video Feed">
+            </div>
+            
+            <div>
+                <div class="summary-card" style="margin-bottom: 20px;">
+                    <div class="summary-title">Total People Detected</div>
+                    <div id="totalPeople" class="summary-number">0</div>
+                    <div class="timestamp">Last updated: <span id="timestamp">-</span></div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-title">Available Desks</div>
+                    <div id="availableDesks" class="summary-number">4</div>
+                    <div style="color: #666; margin-top: 10px;">out of 4 desks</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="desk-grid">
+            <div id="desk1" class="desk-card available">
+                <div class="desk-name">Desk 1</div>
+                <div class="desk-icon">🪑</div>
+                <div class="desk-status available">AVAILABLE</div>
+                <div class="people-count">0 person(s)</div>
+            </div>
+            
+            <div id="desk2" class="desk-card available">
+                <div class="desk-name">Desk 2</div>
+                <div class="desk-icon">🪑</div>
+                <div class="desk-status available">AVAILABLE</div>
+                <div class="people-count">0 person(s)</div>
+            </div>
+            
+            <div id="desk3" class="desk-card available">
+                <div class="desk-name">Desk 3</div>
+                <div class="desk-icon">🪑</div>
+                <div class="desk-status available">AVAILABLE</div>
+                <div class="people-count">0 person(s)</div>
+            </div>
+            
+            <div id="desk4" class="desk-card available">
+                <div class="desk-name">Desk 4</div>
+                <div class="desk-icon">🪑</div>
+                <div class="desk-status available">AVAILABLE</div>
+                <div class="people-count">0 person(s)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Connect to WebSocket
+        const socket = io();
+        
+        // Listen for occupancy updates
+        socket.on('occupancy_update', function(data) {
+            // Update total people count
+            document.getElementById('totalPeople').textContent = data.total_people;
+            document.getElementById('timestamp').textContent = data.last_updated;
+            
+            // Count available desks
+            let availableCount = 0;
+            
+            // Update each desk
+            for (const [deskName, deskInfo] of Object.entries(data.desks)) {
+                const deskNumber = deskName.split(' ')[1];
+                const deskCard = document.getElementById(`desk${deskNumber}`);
+                const statusDiv = deskCard.querySelector('.desk-status');
+                const peopleCount = deskCard.querySelector('.people-count');
+                
+                if (deskInfo.occupied) {
+                    deskCard.className = 'desk-card occupied';
+                    statusDiv.className = 'desk-status occupied';
+                    statusDiv.textContent = 'OCCUPIED';
+                    peopleCount.textContent = `${deskInfo.people_count} person(s)`;
+                } else {
+                    deskCard.className = 'desk-card available';
+                    statusDiv.className = 'desk-status available';
+                    statusDiv.textContent = 'AVAILABLE';
+                    peopleCount.textContent = '0 person(s)';
+                    availableCount++;
+                }
+            }
+            
+            // Update available desks count
+            document.getElementById('availableDesks').textContent = availableCount;
+        });
+        
+        socket.on('connect_error', function() {
+            console.log('Connection failed');
+        });
+    </script>
+</body>
+</html>
