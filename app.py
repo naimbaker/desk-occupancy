@@ -61,7 +61,7 @@ occupancy_data = {
 def detect_desk_occupancy(frame):
     """Run YOLO detection and determine desk occupancy"""
     # Detect only people (class 0)
-    results = model(frame, classes=[0], verbose=False)
+    results = model(frame, conf=0.25, classes=[0], verbose=False)
     
     # Initialize desk status
     desk_status = {}
@@ -96,41 +96,25 @@ def detect_desk_occupancy(frame):
 
 def draw_zones_and_detections(frame, results, desk_status):
     """Draw zones, detections, and labels on frame"""
-    # Draw YOLO detections first
     annotated_frame = results[0].plot()
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale, thickness = 0.7, 2
     
     # Draw desk zones
     for desk_name, zone_percentages in desk_zones.items():
         x1, y1, x2, y2 = get_zone_coordinates(zone_percentages)
+        occupied = desk_status[desk_name]['occupied']
+        color = (0, 0, 255) if occupied else (0, 255, 0)  # Red or Green
+        status_text = "OCCUPIED" if occupied else "AVAILABLE"
         
-        # Choose color based on occupancy
-        if desk_status[desk_name]['occupied']:
-            color = (0, 0, 255)  # Red for occupied
-            status_text = "OCCUPIED"
-        else:
-            color = (0, 255, 0)  # Green for available
-            status_text = "AVAILABLE"
-        
-        # Draw rectangle for zone
+        # Draw zone rectangle and label
         cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), color, 3)
-        
-        # Add desk label background
         label = f"{desk_name}: {status_text}"
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 0.7
-        thickness = 2
+        (text_width, text_height), _ = cv2.getTextSize(label, font, font_scale, thickness)
         
-        (text_width, text_height), baseline = cv2.getTextSize(label, font, font_scale, thickness)
-        
-        # Draw background rectangle for text
-        cv2.rectangle(annotated_frame, 
-                     (x1, y1 - text_height - 10), 
-                     (x1 + text_width + 10, y1), 
-                     color, -1)
-        
-        # Draw text
-        cv2.putText(annotated_frame, label, 
-                   (x1 + 5, y1 - 5), 
+        cv2.rectangle(annotated_frame, (x1, y1 - text_height - 10), 
+                     (x1 + text_width + 10, y1), color, -1)
+        cv2.putText(annotated_frame, label, (x1 + 5, y1 - 5), 
                    font, font_scale, (255, 255, 255), thickness)
     
     return annotated_frame
