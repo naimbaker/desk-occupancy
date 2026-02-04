@@ -4,6 +4,7 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 from datetime import datetime
+import time
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -58,41 +59,14 @@ occupancy_data = {
     'last_updated': None
 }
 
-def detect_desk_occupancy(frame):
-    """Run YOLO detection and determine desk occupancy"""
-    # Detect only people (class 0)
-    results = model(frame, conf=0.25, classes=[0], verbose=False)
-    
-    # Initialize desk status
-    desk_status = {}
-    for desk_name in desk_zones.keys():
-        desk_status[desk_name] = {
-            'occupied': False,
-            'people_count': 0
-        }
-    
-    # Check each detected person
-    if len(results[0].boxes) > 0:
-        for box in results[0].boxes:
-            # Get bounding box coordinates
-            x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
-            
-            # Check which zone this person is in
-            for desk_name, zone_percentages in desk_zones.items():
-                zone_coords = get_zone_coordinates(zone_percentages)
-                if is_person_in_zone((x1, y1, x2, y2), zone_coords):
-                    desk_status[desk_name]['occupied'] = True
-                    desk_status[desk_name]['people_count'] += 1
-    
-    # Update global occupancy data
-    occupancy_data['desks'] = desk_status
-    occupancy_data['total_people'] = len(results[0].boxes)
-    occupancy_data['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # Draw zones and annotations on frame
-    annotated_frame = draw_zones_and_detections(frame, results, desk_status)
-    
-    return annotated_frame
+# Initialize desk status
+initial_desk_status = {}
+for desk_name in desk_zones.keys():
+    initial_desk_status[desk_name] = {
+        'occupied': False,
+        'people_count': 0
+    }
+occupancy_data['desks'] = initial_desk_status
 
 def draw_zones_and_detections(frame, results, desk_status):
     """Draw zones, detections, and labels on frame"""
@@ -119,22 +93,87 @@ def draw_zones_and_detections(frame, results, desk_status):
     
     return annotated_frame
 
+def draw_zones(frame, desk_status):
+    """Draw desk zones and status labels on frame without detections"""
+    annotated_frame = frame.copy()
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale, thickness = 0.7, 2
+    
+    # Draw desk zones
+    for desk_name, zone_percentages in desk_zones.items():
+        x1, y1, x2, y2 = get_zone_coordinates(zone_percentages)
+        occupied = desk_status[desk_name]['occupied']
+        color = (0, 0, 255) if occupied else (0, 255, 0)  # Red or Green
+        status_text = "OCCUPIED" if occupied else "AVAILABLE"
+        
+        # Draw zone rectangle and label
+        cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), color, 3)
+        label = f"{desk_name}: {status_text}"
+        (text_width, text_height), _ = cv2.getTextSize(label, font, font_scale, thickness)
+        
+        cv2.rectangle(annotated_frame, (x1, y1 - text_height - 10), 
+                     (x1 + text_width + 10, y1), color, -1)
+        cv2.putText(annotated_frame, label, (x1 + 5, y1 - 5), 
+                   font, font_scale, (255, 255, 255), thickness)
+    
+    return annotated_frame
+
 def generate_frames():
     """Generate video frames with detection"""
+    last_update = 0
+    last_desk_status = initial_desk_status.copy()
+    
     while True:
         success, frame = cap.read()
         if not success:
             break
         
-        # Run detection and get annotated frame
-        annotated_frame = detect_desk_occupancy(frame)
+        current_time = time.time()
+        if current_time - last_update >= 3:
+            # Run YOLO detection
+            results = model(frame, conf=0.25, classes=[0], verbose=False)
+            
+            # Initialize desk status
+            desk_status = {}
+            for desk_name in desk_zones.keys():
+                desk_status[desk_name] = {
+                    'occupied': False,
+                    'people_count': 0
+                }
+            
+            # Check each detected person
+            if len(results[0].boxes) > 0:
+                for box in results[0].boxes:
+                    # Get bounding box coordinates
+                    x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                    
+                    # Check which zone this person is in
+                    for desk_name, zone_percentages in desk_zones.items():
+                        zone_coords = get_zone_coordinates(zone_percentages)
+                        if is_person_in_zone((x1, y1, x2, y2), zone_coords):
+                            desk_status[desk_name]['occupied'] = True
+                            desk_status[desk_name]['people_count'] += 1
+            
+            # Update global occupancy data
+            last_desk_status = desk_status
+            occupancy_data['desks'] = desk_status
+            occupancy_data['total_people'] = len(results[0].boxes)
+            occupancy_data['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # Emit occupancy update via WebSocket
+            socketio.emit('occupancy_update', occupancy_data)
+            
+            last_update = current_time
+            
+            # Draw zones and detections on frame
+            annotated_frame = draw_zones_and_detections(frame, results, desk_status)
+        else:
+            # Draw zones on current frame without detections
+            annotated_frame = draw_zones(frame, last_desk_status)
         
         # Encode frame to JPEG
         ret, buffer = cv2.imencode('.jpg', annotated_frame)
         frame_bytes = buffer.tobytes()
-        
-        # Emit occupancy update via WebSocket
-        socketio.emit('occupancy_update', occupancy_data)
         
         # Yield frame for video stream
         yield (b'--frame\r\n'

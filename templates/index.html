@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desk Occupancy Detection</title>
+    <title>Desk Occupancy Monitoring System</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
         * {
@@ -14,9 +14,10 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+            background: #0ea5e9;
             min-height: 100vh;
             padding: 20px;
+            color: #1f2937;
         }
         
         .container {
@@ -29,6 +30,7 @@
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5em;
+            font-weight: 600;
         }
         
         .main-grid {
@@ -40,9 +42,10 @@
         
         .video-container {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border: 1px solid #e5e7eb;
         }
         
         .video-feed {
@@ -53,27 +56,29 @@
         
         .desk-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
         }
         
         .desk-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
             text-align: center;
             transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
         }
         
         .desk-card.occupied {
-            border: 3px solid #ef4444;
-            background: #fee;
+            border-color: #dc2626;
+            background: #fef2f2;
         }
         
         .desk-card.available {
-            border: 3px solid #22c55e;
-            background: #efe;
+            border-color: #16a34a;
+            background: #f0fdf4;
         }
         
         .desk-name {
@@ -84,20 +89,21 @@
         }
         
         .desk-status {
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
             margin: 10px 0;
+            display: inline-block;
         }
         
         .desk-status.occupied {
-            background: #ef4444;
+            background: #dc2626;
             color: white;
         }
         
         .desk-status.available {
-            background: #22c55e;
+            background: #16a34a;
             color: white;
         }
         
@@ -114,10 +120,11 @@
         
         .summary-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
             text-align: center;
+            border: 1px solid #e5e7eb;
         }
         
         .summary-title {
@@ -145,6 +152,12 @@
             }
         }
         
+        @media (max-width: 768px) {
+            .desk-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
         @media (max-width: 600px) {
             .desk-grid {
                 grid-template-columns: 1fr;
@@ -154,11 +167,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>🪑 Desk Occupancy Detection System</h1>
+        <h1>Desk Occupancy Monitoring System</h1>
         
         <div class="main-grid">
             <div class="video-container">
-                <h2 style="margin-bottom: 15px; color: #333;">Live Camera Feed</h2>
+                <h2 style="margin-bottom: 15px; color: #1f2937; font-weight: 600;">Live Camera Feed</h2>
                 <img src="{{ url_for('video_feed') }}" class="video-feed" alt="Video Feed">
             </div>
             
