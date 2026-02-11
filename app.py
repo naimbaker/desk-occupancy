@@ -131,7 +131,7 @@ def generate_frames():
         current_time = time.time()
         if current_time - last_update >= 3:
             # Run YOLO detection
-            results = model(frame, conf=0.25, classes=[0], verbose=False)
+            results = model(frame, conf=0.15, classes=[0], verbose=False)
             
             # Initialize desk status
             desk_status = {}
