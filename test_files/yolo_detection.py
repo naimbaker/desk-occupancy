@@ -6,7 +6,7 @@ print("Loading YOLO model...")
 model = YOLO('yolov8n.pt')
 
 # Use the camera index you found (probably 1 or 2 for Camo)
-camera_index = 0 # Change this to whatever worked in the test
+camera_index = 1 # Change this to whatever worked in the test
 
 print(f"Connecting to Camo camera (index {camera_index})...")
 cap = cv2.VideoCapture(camera_index)

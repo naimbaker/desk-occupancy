@@ -184,6 +184,10 @@ def index():
     """Main page"""
     return render_template('index.html')
 
+@app.route('/floorplan')
+def floorplan():
+    return render_template('floorplan.html')
+
 @app.route('/video_feed')
 def video_feed():
     """Video streaming route"""
