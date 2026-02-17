@@ -12,7 +12,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Load YOLO model
 model = YOLO('yolov8n.pt')
 
-# Camera setup - change this to your Camo camera index
 camera_index = 1
 cap = cv2.VideoCapture(camera_index)
 

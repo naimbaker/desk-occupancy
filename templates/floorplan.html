@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +24,6 @@
             max-width: 1800px; 
         }
         h1 {
-            color: #1e293b;
             margin-bottom: 20px;
         }
         svg {
@@ -52,7 +50,16 @@
 <body>
 
     <h1>Library Map</h1>
-    <a href="{{ url_for('index') }}" style="color: black; text-decoration: none; font-weight: bold;">Main Page</a>        
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('index') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Main Page</a>
+        <button id="toggleCamera" style="padding: 10px 20px; background: #0ea5e9; color: white; border: none; border-radius: 5px; cursor: pointer; ">
+            Show Camera Feed
+        </button>
+    </div>
+
+    <div id="cameraContainer" style="display: none; margin-bottom: 20px; text-align: center;">
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" style="width: 640px; border: 3px solid #1e293b; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    </div>
 
     
     <div class="container">
@@ -81,7 +88,7 @@
 </g>
 <g id="desk-01">
 <rect id="desk-shape" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1964.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1991.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 1;</tspan></text>
+<text id="desk-label" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1991.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 1</tspan></text>
 </g>
 <g id="desk-02">
 <rect id="desk-shape_2" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1804.25)" fill="white" stroke="black" stroke-width="3"/>
@@ -89,27 +96,27 @@
 </g>
 <g id="desk-03">
 <rect id="desk-shape_3" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1644.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_3" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1671.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 3;</tspan></text>
+<text id="desk-label_3" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1671.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 3</tspan></text>
 </g>
 <g id="desk-04">
 <rect id="desk-shape_4" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1465.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_4" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1492.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 4 ;</tspan></text>
+<text id="desk-label_4" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1492.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 4</tspan></text>
 </g>
 <g id="desk-05">
 <rect id="desk-shape_5" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1385.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_5" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1412.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 5;</tspan></text>
+<text id="desk-label_5" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1412.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 5</tspan></text>
 </g>
 <g id="desk-06">
 <rect id="desk-shape_6" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1215.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_6" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1242.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 6;</tspan></text>
+<text id="desk-label_6" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1242.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 6</tspan></text>
 </g>
 <g id="desk-07">
 <rect id="desk-shape_7" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1044.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_7" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1071.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 7;</tspan></text>
+<text id="desk-label_7" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1071.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 7</tspan></text>
 </g>
 <g id="desk-08">
 <rect id="desk-shape_8" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 859.251)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_8" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 149 886.095)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 8;</tspan></text>
+<text id="desk-label_8" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 149 886.095)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 8</tspan></text>
 </g>
 <g id="desk-09">
 <rect id="desk-shape_9" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 551.251)" fill="white" stroke="black" stroke-width="3"/>
@@ -137,27 +144,27 @@
 </g>
 <g id="desk-15">
 <rect id="desk-shape_15" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1943.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_15" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1970.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 15;</tspan></text>
+<text id="desk-label_15" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1970.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 15</tspan></text>
 </g>
 <g id="desk-16">
 <rect id="desk-shape_16" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1763.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_16" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1790.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 16;</tspan></text>
+<text id="desk-label_16" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1790.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 16</tspan></text>
 </g>
 <g id="desk-17">
 <rect id="desk-shape_17" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1689.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_17" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1716.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 17;</tspan></text>
+<text id="desk-label_17" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1716.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 17</tspan></text>
 </g>
 <g id="desk-18">
 <rect id="desk-shape_18" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1517.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_18" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1544.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 18;</tspan></text>
+<text id="desk-label_18" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1544.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 18</tspan></text>
 </g>
 <g id="desk-19">
 <rect id="desk-shape_19" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1367.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_19" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1394.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 19;</tspan></text>
+<text id="desk-label_19" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1394.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 19</tspan></text>
 </g>
 <g id="desk-20">
 <rect id="desk-shape_20" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1192.25)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_20" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1219.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 20;</tspan></text>
+<text id="desk-label_20" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1219.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 20</tspan></text>
 </g>
 <g id="desk-21">
 <rect id="desk-shape_21" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 866.251)" fill="white" stroke="black" stroke-width="3"/>
@@ -165,15 +172,15 @@
 </g>
 <g id="desk-22">
 <rect id="desk-shape_22" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 729.251)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_22" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 756.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 22;</tspan></text>
+<text id="desk-label_22" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 756.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 22</tspan></text>
 </g>
 <g id="desk-23">
 <rect id="desk-shape_23" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 610.251)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_23" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 637.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 23;</tspan></text>
+<text id="desk-label_23" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 637.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 23</tspan></text>
 </g>
 <g id="desk-24">
 <rect id="desk-shape_24" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 502.251)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_24" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 529.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 24;</tspan></text>
+<text id="desk-label_24" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 529.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 24</tspan></text>
 </g>
 <g id="desk-25">
 <rect id="desk-shape_25" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 422.251)" fill="white" stroke="black" stroke-width="3"/>
@@ -181,7 +188,7 @@
 </g>
 <g id="desk-26">
 <rect id="desk-shape_26" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 289.251)" fill="white" stroke="black" stroke-width="3"/>
-<text id="desk-label_26" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 316.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="4.646" y="18.3359">Desk 26;</tspan></text>
+<text id="desk-label_26" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 316.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="4.646" y="18.3359">Desk 26</tspan></text>
 </g>
 <g id="desk-27">
 <rect id="desk-shape_27" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 178.251)" fill="white" stroke="black" stroke-width="3"/>
@@ -211,52 +218,42 @@
     
     </div>
 
-    zooming script
-    <!-- <script>
-        
-        window.onload = function() {
-        var panZoomInstance = svgPanZoom('svg', {
-        zoomEnabled: true,
-        controlIconsEnabled: true,
-        fit: true,
-        center: true,
-        minZoom: 0.1
-
-
-        
-    });
-};
-    </script> -->
-
 
 
 
 <!-- Scripts for socet.io and real-time updates. -->
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <script>
-    const socket = io();
+        const socket = io();
+        const toggleBtn = document.getElementById('toggleCamera');
+        const cameraDiv = document.getElementById('cameraContainer');
+        const videoImg = document.getElementById('videoFeed');
 
-    socket.on('occupancy_update', function(data) {
-        console.log("YOLO Data Received:", data); // Check your browser console for this!
+       // button toggle logic for camera feed
+        toggleBtn.addEventListener('click', () => {
+            if (cameraDiv.style.display === 'none') {
+                cameraDiv.style.display = 'block';
+                toggleBtn.textContent = 'Hide Camera Feed';
+            } else {
+                cameraDiv.style.display = 'none';
+                toggleBtn.textContent = 'Show Camera Feed';
+            }
+        });
 
-        for (const [deskName, deskInfo] of Object.entries(data.desks)) {
-            // Logic to convert "Desk 1" -> "desk-shape" 
-            // and "Desk 2" -> "desk-shape_2"
-            const deskNum = deskName.split(' ')[1]; 
-            let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
-
-            const deskElement = document.getElementById(elementId);
-            
-            if (deskElement) {
-                if (deskInfo.occupied) {
-                    deskElement.setAttribute('fill', '#ef4444'); // Red
-                } else {
-                    deskElement.setAttribute('fill', 'white');   // Back to white
+        // Occupancy logic 
+        socket.on('occupancy_update', function(data) {
+            console.log("Update received:", data);
+            for (const [deskName, deskInfo] of Object.entries(data.desks)) {
+                const deskNum = deskName.split(' ')[1];
+                let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
+                const deskElement = document.getElementById(elementId);
+                if (deskElement) {
+                    deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : 'white');
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
+
+
 
 </body>
 </html>
