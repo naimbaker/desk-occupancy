@@ -142,6 +142,10 @@ def generate_frames():
 def index():
     return render_template('index.html')
 
+@app.route('/floorplan')
+def floorplan():
+    return render_template('floorplan.html')
+
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(),

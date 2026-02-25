@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Floorplan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 95vw;
+            max-width: 1800px; 
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+            max-height: 120vh;
+            display: block;
+        }
+        /* Interactivity Styles */
+        rect[id^="desk-shape"] {
+            cursor: pointer;
+            transition: fill 0.2s ease;
+        }
+        rect[id^="desk-shape"]:hover {
+            stroke: #3b82f6;
+            stroke-width: 5px;
+        }
+        text {
+            pointer-events: none; /* Prevents text from blocking clicks on the desks */
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Library Map</h1>
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('index') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Main Page</a>
+        <button id="toggleCamera" style="padding: 10px 20px; background: #0ea5e9; color: white; border: none; border-radius: 5px; cursor: pointer; ">
+            Show Camera Feed
+        </button>
+    </div>
+
+    <div id="cameraContainer" style="display: none; margin-bottom: 20px; text-align: center;">
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" style="width: 640px; border: 3px solid #1e293b; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    </div>
+
+    
+    <div class="container">
+       <svg width="2562" height="2732" viewBox="0 0 2562 2732" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="2562" height="2732" fill="#F5F5F5"/>
+<g id="library-floorplan" clip-path="url(#clip0_0_1)" filter="url(#filter0_d_0_1)">
+<rect width="2554" height="2724" transform="translate(4)" fill="#8B8B8B"/>
+<rect id="staircase" x="1027.59" y="1957.42" width="506" height="714" fill="#D9D9D9"/>
+<line id="Line 1" x1="2200" y1="1121.51" x2="2508" y2="1121" stroke="black" stroke-width="4"/>
+<path id="Line 2" d="M2199 998.51L2508.48 998.128" stroke="black" stroke-width="4"/>
+<line id="Line 3" x1="16.9905" y1="806.543" x2="341.988" y2="805" stroke="black" stroke-width="4"/>
+<line id="Line 4" x1="18.9967" y1="672.536" x2="343.996" y2="672" stroke="black" stroke-width="4"/>
+<rect id="back-table-1" x="469.256" y="128.12" width="137" height="202" fill="#D9D9D9"/>
+<rect id="back-table-2" x="719.256" y="127.708" width="137" height="202" fill="#D9D9D9"/>
+<rect id="back-table-3" x="969.255" y="127.296" width="137" height="202" fill="#D9D9D9"/>
+<rect id="back-table-4" x="1219.26" y="126.883" width="137" height="202" fill="#D9D9D9"/>
+<g id="study rooms-1">
+<rect id="Rectangle 10" x="1315.88" y="-1.16323" width="377" height="94" transform="rotate(-0.0944829 1315.88 -1.16323)" fill="#D9D9D9"/>
+<path id="Line 5" d="M1447.88 0.618989L1448.03 92.6189" stroke="black"/>
+<path id="Line 6" d="M1584.88 2.39307L1585.04 94.3929" stroke="black"/>
+</g>
+<g id="study rooms-2">
+<rect id="Rectangle 10_2" x="1781.03" y="-0.308709" width="377" height="94" transform="rotate(-0.0944829 1781.03 -0.308709)" fill="#D9D9D9"/>
+<path id="Line 5_2" d="M1913.04 1.47351L1913.19 93.4734" stroke="black"/>
+<path id="Line 6_2" d="M2064.88 1.60153L2065.03 93.6014" stroke="black"/>
+</g>
+<g id="desk-01">
+<rect id="desk-shape" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1964.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1991.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 1</tspan></text>
+</g>
+<g id="desk-02">
+<rect id="desk-shape_2" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1804.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_2" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1831.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 2</tspan></text>
+</g>
+<g id="desk-03">
+<rect id="desk-shape_3" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1644.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_3" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1671.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 3</tspan></text>
+</g>
+<g id="desk-04">
+<rect id="desk-shape_4" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1465.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_4" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1492.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 4</tspan></text>
+</g>
+<g id="desk-05">
+<rect id="desk-shape_5" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1385.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_5" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1412.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 5</tspan></text>
+</g>
+<g id="desk-06">
+<rect id="desk-shape_6" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1215.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_6" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1242.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 6</tspan></text>
+</g>
+<g id="desk-07">
+<rect id="desk-shape_7" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 1044.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_7" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 148 1071.09)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 7</tspan></text>
+</g>
+<g id="desk-08">
+<rect id="desk-shape_8" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 859.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_8" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 149 886.095)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 8</tspan></text>
+</g>
+<g id="desk-09">
+<rect id="desk-shape_9" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 551.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_9" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 150 578.095)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.294922" y="18.3359">Desk 9</tspan></text>
+</g>
+<g id="desk-10">
+<rect id="desk-shape_10" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 409.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_10" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 144 436.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 10</tspan></text>
+</g>
+<g id="desk-11">
+<rect id="desk-shape_11" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 267.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_11" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 144 294.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 11</tspan></text>
+</g>
+<g id="desk-12">
+<rect id="desk-shape_12" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 125.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_12" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 144 152.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 12</tspan></text>
+</g>
+<g id="desk-13">
+<rect id="desk-shape_13" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 2267.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_13" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 2294.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 13</tspan></text>
+</g>
+<g id="desk-14">
+<rect id="desk-shape_14" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 2105.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_14" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 2132.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 14</tspan></text>
+</g>
+<g id="desk-15">
+<rect id="desk-shape_15" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1943.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_15" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1970.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 15</tspan></text>
+</g>
+<g id="desk-16">
+<rect id="desk-shape_16" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1763.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_16" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1790.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 16</tspan></text>
+</g>
+<g id="desk-17">
+<rect id="desk-shape_17" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1689.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_17" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1716.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.146004" y="18.3359">Desk 17</tspan></text>
+</g>
+<g id="desk-18">
+<rect id="desk-shape_18" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1517.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_18" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1544.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 18</tspan></text>
+</g>
+<g id="desk-19">
+<rect id="desk-shape_19" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1367.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_19" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1394.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 19</tspan></text>
+</g>
+<g id="desk-20">
+<rect id="desk-shape_20" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 1192.25)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_20" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 1219.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 20</tspan></text>
+</g>
+<g id="desk-21">
+<rect id="desk-shape_21" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 866.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_21" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 893.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 21</tspan></text>
+</g>
+<g id="desk-22">
+<rect id="desk-shape_22" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 729.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_22" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 756.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 22</tspan></text>
+</g>
+<g id="desk-23">
+<rect id="desk-shape_23" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 610.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_23" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 637.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.144917" y="18.3359">Desk 23</tspan></text>
+</g>
+<g id="desk-24">
+<rect id="desk-shape_24" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 502.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_24" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 529.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.143826" y="18.3359">Desk 24</tspan></text>
+</g>
+<g id="desk-25">
+<rect id="desk-shape_25" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 422.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_25" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 449.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 25</tspan></text>
+</g>
+<g id="desk-26">
+<rect id="desk-shape_26" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 289.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_26" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 316.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="4.646" y="18.3359">Desk 26</tspan></text>
+</g>
+<g id="desk-27">
+<rect id="desk-shape_27" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 178.251)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_27" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 205.102)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 27</tspan></text>
+</g>
+<g id="desk-28">
+<rect id="desk-shape_28" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2254 46.2514)" fill="white" stroke="black" stroke-width="3"/>
+<text id="desk-label_28" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2317 73.1023)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="20" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 28</tspan></text>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_0_1" x="0" y="0" width="2562" height="2732" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
+</filter>
+<clipPath id="clip0_0_1">
+<rect width="2554" height="2724" fill="white" transform="translate(4)"/>
+</clipPath>
+</defs>
+</svg>
+    
+    </div>
+
+
+
+
+<!-- Scripts for socet.io and real-time updates. -->
+<script>
+        const socket = io();
+        const toggleBtn = document.getElementById('toggleCamera');
+        const cameraDiv = document.getElementById('cameraContainer');
+        const videoImg = document.getElementById('videoFeed');
+
+       // button toggle logic for camera feed
+        toggleBtn.addEventListener('click', () => {
+            if (cameraDiv.style.display === 'none') {
+                cameraDiv.style.display = 'block';
+                toggleBtn.textContent = 'Hide Camera Feed';
+            } else {
+                cameraDiv.style.display = 'none';
+                toggleBtn.textContent = 'Show Camera Feed';
+            }
+        });
+
+        // Occupancy logic 
+        socket.on('occupancy_update', function(data) {
+            console.log("Update received:", data);
+            for (const [deskName, deskInfo] of Object.entries(data.desks)) {
+                const deskNum = deskName.split(' ')[1];
+                let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
+                const deskElement = document.getElementById(elementId);
+                if (deskElement) {
+                    deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : 'white');
+                }
+            }
+        });
+    </script>
+
+
+
+</body>
+</html>
+
+
