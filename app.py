@@ -18,7 +18,7 @@ admin_password = "password"
 model = YOLO('yolov8x.pt')
 
 # Camera URL (Raspberry Pi MJPEG stream)
-camera_url = "rtsp://10.5.1.243:8554/webcam"
+camera_url = "rtsp://10.5.3.210:8554/webcam"
 
 # Define desk zones (percentages of frame)
 desk_zones = {
@@ -147,9 +147,9 @@ def generate_frames():
 def landing():
     return render_template('landing.html')
 
-@app.route('/floorplan')
-def floorplan():
-    return render_template('floorplan.html')
+@app.route('/library_floor2')
+def library_floor2():
+    return render_template('library_floor2.html')
 
 @app.route('/video_feed')
 def video_feed():
