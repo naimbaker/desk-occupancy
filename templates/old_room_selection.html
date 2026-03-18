@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select A Building</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            font-family: 'Montserrat', sans-serif;
+            display: block; 
+        }
+
+        .header-container {
+            padding: 60px 0 0 60px; 
+            text-align: left;
+        }
+
+        h1 {
+            color: #004684;
+            font-size: 64px;
+            font-weight: 600;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            width: 100%;
+        }
+
+        h2 {
+            text-decoration: underline;
+            text-decoration-color: #fdb927;
+            color: #004684;
+            font-size: 40px;
+            font-weight: 200;
+            margin: 80px 0 50px 0;
+        }
+
+        .building-link {
+            text-decoration: none;
+            display: block;
+            position: relative;
+            width: 1111px;
+            height: 188px;
+            margin-bottom: 60px;
+            border: 2px solid black;
+            overflow: hidden;
+            background-color: #ddd;
+        }
+
+        .building-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .building-link::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 70, 132, 0.3);
+            transition: background-color 0.3s ease;
+            z-index: 1;
+        }
+
+        .building-link:hover::after {
+            background-color: rgba(0, 70, 132, 0.7);
+        }
+
+        /* 2. CENTER TEXT PROPERLY */
+        .label-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* This math creates the perfect center */
+            color: white;
+            font-size: 48px;
+            font-weight: 600;
+            z-index: 2;
+            white-space: nowrap; /* Prevents "Engineering Building" from breaking into two lines */
+            text-align: center;
+            width: 100%; /* Ensures the center point is based on the full width */
+            pointer-events: none;
+        }
+
+        .disabled-btn {
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+
+        .building-link:hover .label-text {
+            color: #fdb927; 
+            transition: color 0.3s ease; /* Smooth transition */
+}
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h1>Desk Occupancy<br>Detection System</h1>
+    </div>
+
+    <div class="content-wrapper">
+        <h2>Select A Building to View Floorplans</h2>
+
+        <a href="{{ url_for('floorplan') }}" class="building-link">
+            <img src="{{ url_for('static', filename='images/library.png') }}" alt="Main Library" class="building-image">
+            <div class="label-text">F.D. BLUFORD LIBRARY</div>
+        </a>
+
+        <a href="javascript:void(0)" class="building-link disabled-btn">
+            <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Engineering" class="building-image">
+            <div class="label-text">MARTIN ERIC ENGINEERING BUILDING</div>
+        </a>
+
+<br>
+        <a href="{{ url_for('landing') }}" class="back-link">return to login</a>
+    </div>
+
+    {% if role == 'admin' %}
+    <div style="margin-top: 20px; background: #004684; padding: 10px; display: inline-block; border-radius: 5px;">
+        <a href="{{ url_for('index') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
+            &rarr; OPEN SYSTEM DASHBOARD (ADMIN ONLY)
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+    
+
+
+</body>
+</html>

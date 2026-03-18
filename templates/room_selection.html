@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select A Building</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             background-color: white;
             font-family: 'Montserrat', sans-serif;
-            display: block; 
+            display: block;
         }
 
         .header-container {
-            padding: 60px 0 0 60px; 
+            padding: 60px 0 0 60px;
             text-align: left;
         }
 
@@ -30,7 +30,7 @@
         .content-wrapper {
             display: flex;
             flex-direction: column;
-            align-items: center; 
+            align-items: center;
             width: 100%;
         }
 
@@ -43,16 +43,24 @@
             margin: 80px 0 50px 0;
         }
 
-        .building-link {
-            text-decoration: none;
-            display: block;
-            position: relative;
+        /* --- Building Card Wrapper --- */
+        .building-card {
             width: 1111px;
-            height: 188px;
             margin-bottom: 60px;
             border: 2px solid black;
             overflow: hidden;
+        }
+
+        /* --- Clickable Banner --- */
+        .building-banner {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 188px;
+            cursor: pointer;
             background-color: #ddd;
+            overflow: hidden;
+            text-decoration: none;
         }
 
         .building-image {
@@ -62,7 +70,8 @@
             display: block;
         }
 
-        .building-link::after {
+        /* Blue mask overlay */
+        .building-banner::after {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -71,35 +80,140 @@
             z-index: 1;
         }
 
-        .building-link:hover::after {
+        .building-banner:hover::after {
             background-color: rgba(0, 70, 132, 0.7);
         }
 
-        /* 2. CENTER TEXT PROPERLY */
         .label-text {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* This math creates the perfect center */
+            transform: translate(-50%, -50%);
             color: white;
             font-size: 48px;
             font-weight: 600;
             z-index: 2;
-            white-space: nowrap; /* Prevents "Engineering Building" from breaking into two lines */
+            white-space: nowrap;
             text-align: center;
-            width: 100%; /* Ensures the center point is based on the full width */
+            width: 100%;
             pointer-events: none;
         }
 
-        .disabled-btn {
-            cursor: not-allowed;
-            filter: grayscale(0.5);
+        .building-banner:hover .label-text {
+            color: #fdb927;
+            transition: color 0.3s ease;
         }
 
-        .building-link:hover .label-text {
-            color: #fdb927; 
-            transition: color 0.3s ease; /* Smooth transition */
-}
+        /* Chevron icon on banner */
+        .chevron {
+            position: absolute;
+            bottom: 12px;
+            right: 16px;
+            z-index: 2;
+            color: white;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .building-card.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* --- Floor Dropdown --- */
+        .floor-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+            background-color: white;
+        }
+
+        .building-card.open .floor-dropdown {
+            max-height: 300px;
+        }
+
+        /* Individual floor row */
+        .floor-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 60px;
+            border-top: 1px solid #bbb;
+            background-color: #d9d9d9;
+            text-decoration: none;
+            color: black;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .floor-row:hover:not(.floor-disabled) {
+            background-color: #c8c8c8;
+        }
+
+        .floor-row.floor-disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .floor-name {
+            font-size: 18px;
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+
+        .floor-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .floor-availability {
+            font-size: 16px;
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+
+        /* Status dot */
+        .status-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-green  { background-color: #22c55e; }
+        .dot-yellow { background-color: #eab308; }
+        .dot-red    { background-color: #ef4444; }
+        .dot-gray   { background-color: #9ca3af; }
+
+        /* --- Disabled Building Card (Engineering) --- */
+        .building-card.disabled-btn {
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+            margin-bottom: 60px;
+        }
+
+        .building-card.disabled-btn .building-banner {
+            cursor: not-allowed;
+        }
+
+        /* --- Back link --- */
+        .back-link {
+            color: #004684;
+            font-size: 14px;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+
+        /* --- Admin link --- */
+        .admin-link-container {
+            margin-top: 20px;
+            background: #004684;
+            padding: 10px;
+            display: inline-block;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -111,31 +225,114 @@
     <div class="content-wrapper">
         <h2>Select A Building to View Floorplans</h2>
 
-        <a href="{{ url_for('floorplan') }}" class="building-link">
-            <img src="{{ url_for('static', filename='images/library.png') }}" alt="Main Library" class="building-image">
-            <div class="label-text">F.D. BLUFORD LIBRARY</div>
-        </a>
+        <!-- ===== F.D. BLUFORD LIBRARY ===== -->
+        <div class="building-card" id="libraryCard">
 
-        <a href="javascript:void(0)" class="building-link disabled-btn">
-            <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Engineering" class="building-image">
-            <div class="label-text">MARTIN ERIC ENGINEERING BUILDING</div>
-        </a>
+            <!-- Clickable banner -->
+            <div class="building-banner" onclick="toggleLibrary()">
+                <img src="{{ url_for('static', filename='images/library.png') }}" alt="Main Library" class="building-image">
+                <div class="label-text">F.D. BLUFORD LIBRARY</div>
+                <span class="chevron">&#x25BC;</span>
+            </div>
 
-<br>
+            <!-- Floor dropdown -->
+            <div class="floor-dropdown" id="libraryDropdown">
+
+                <!-- Floor 1 — no page yet -->
+                <div class="floor-row floor-disabled">
+                    <span class="floor-name">First Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability">— Coming Soon</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                </div>
+
+                <!-- Floor 2 — live page, fetch real data -->
+                <a href="{{ url_for('library_floor2') }}" class="floor-row" id="floor2Row">
+                    <span class="floor-name">Second Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability" id="floor2Availability">Loading…</span>
+                        <span class="status-dot" id="floor2Dot"></span>
+                    </div>
+                </a>
+
+                <!-- Floor 3 — no page yet -->
+                <div class="floor-row floor-disabled">
+                    <span class="floor-name">Third Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability">— Coming Soon</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== MARTIN ERIC ENGINEERING ===== -->
+        <div class="building-card disabled-btn">
+            <div class="building-banner" style="cursor:not-allowed;">
+                <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Engineering" class="building-image">
+                <div class="label-text">MARTIN ERIC ENGINEERING BUILDING</div>
+            </div>
+        </div>
+
+        <br>
         <a href="{{ url_for('landing') }}" class="back-link">return to login</a>
+
+        {% if role == 'admin' %}
+        <div class="admin-link-container" style="margin-top: 20px;">
+            <a href="{{ url_for('index') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
+                &rarr; OPEN SYSTEM DASHBOARD (ADMIN ONLY)
+            </a>
+        </div>
+        {% endif %}
+
     </div>
 
-    {% if role == 'admin' %}
-    <div style="margin-top: 20px; background: #004684; padding: 10px; display: inline-block; border-radius: 5px;">
-        <a href="{{ url_for('index') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
-            &rarr; OPEN SYSTEM DASHBOARD (ADMIN ONLY)
-        </a>
-    </div>
-    {% endif %}
-</div>
+    <script>
+        const TOTAL_DESKS = 28;
 
-    
+        // Toggle the library dropdown open/closed
+        function toggleLibrary() {
+            const card = document.getElementById('libraryCard');
+            card.classList.toggle('open');
+        }
 
+        // Determine dot color class based on % available
+        function getDotClass(available, total) {
+            const pct = available / total;
+            if (pct > 0.5)  return 'dot-green';
+            if (pct > 0.25) return 'dot-yellow';
+            return 'dot-red';
+        }
+
+        // Fetch real occupancy data from the API for Floor 2
+        async function loadFloor2Occupancy() {
+            try {
+                const res = await fetch('/api/occupancy');
+                const data = await res.json();
+
+                const desks = data.desks || {};
+                const totalDesks = Object.keys(desks).length || TOTAL_DESKS;
+                const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
+                const availableCount = totalDesks - occupiedCount;
+
+                document.getElementById('floor2Availability').textContent =
+                    `${availableCount}/${totalDesks} Desks Available`;
+
+                const dot = document.getElementById('floor2Dot');
+                dot.className = 'status-dot ' + getDotClass(availableCount, totalDesks);
+
+            } catch (err) {
+                document.getElementById('floor2Availability').textContent = 'Unavailable';
+                document.getElementById('floor2Dot').className = 'status-dot dot-gray';
+            }
+        }
+
+        // Load occupancy on page load and refresh every 30 seconds
+        loadFloor2Occupancy();
+        setInterval(loadFloor2Occupancy, 30000);
+    </script>
 
 </body>
 </html>
