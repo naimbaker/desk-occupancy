@@ -10,10 +10,10 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load YOLO model
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8x.pt')
 
 # Camera URL (Raspberry Pi MJPEG stream)
-camera_url = "http://100.124.117.122:8080/feed1.mjpg"
+camera_url = "rtsp://10.5.1.243:8554/webcam"
 
 # Define desk zones (percentages of frame)
 desk_zones = {
