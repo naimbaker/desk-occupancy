@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify, session, redirect, url_for, request
 from flask_socketio import SocketIO
 from ultralytics import YOLO
 import cv2
@@ -7,7 +7,12 @@ from datetime import datetime
 import time
 
 app = Flask(__name__)
+app.secret_key = 'cheese' # required for sessions
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+#hardcoded credentials for now
+admin_username = "admin"
+admin_password = "password"
 
 # Load YOLO model
 model = YOLO('yolov8n.pt')
@@ -139,8 +144,8 @@ def generate_frames():
 
 # --- Flask routes ---
 @app.route('/')
-def index():
-    return render_template('index.html')
+def landing():
+    return render_template('landing.html')
 
 @app.route('/floorplan')
 def floorplan():
@@ -154,6 +159,37 @@ def video_feed():
 @app.route('/api/occupancy')
 def get_occupancy():
     return jsonify(occupancy_data)
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/room_selection')
+def room_selection():
+    role = session.get('role', 'guest') # Default to guest if no role in session
+    return render_template('room_selection.html', role=role)
+
+@app.route('/continue_as_guest')
+def continue_as_guest():
+    return redirect(url_for('room_selection'))
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    password = request.form.get('password') # Get password from the input field
+    
+    if password == "password": # Check against your hardcoded password
+        session['role'] = 'admin' # Give them the Admin "ID Card"
+        return redirect(url_for('room_selection'))
+    else:
+        # If password fails, you could redirect back or show an error
+        return redirect(url_for('landing'))
+
+@app.route('/guest_login')
+def guest_login():
+    session['role'] = 'guest' # Give them a Guest "ID Card"
+    return redirect(url_for('room_selection'))
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5001, use_reloader=False)

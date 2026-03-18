@@ -4,10 +4,12 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Floorplan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
+
+    <title> 2nd Floor</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
             display: flex;
             flex-direction: column;
@@ -42,7 +44,7 @@
             stroke-width: 5px;
         }
         text {
-            pointer-events: none; /* Prevents text from blocking clicks on the desks */
+            pointer-events: none; 
             user-select: none;
         }
     </style>
@@ -51,7 +53,7 @@
 
     <h1>Library Map</h1>
     <div style="margin-bottom: 20px; display: flex; gap: 10px;">
-        <a href="{{ url_for('index') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Main Page</a>
+        <a href="{{ url_for('room_selection') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Return to room selection</a>
         <button id="toggleCamera" style="padding: 10px 20px; background: #0ea5e9; color: white; border: none; border-radius: 5px; cursor: pointer; ">
             Show Camera Feed
         </button>

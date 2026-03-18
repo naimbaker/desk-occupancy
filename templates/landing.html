@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Desk Occupancy System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            overflow: hidden; /* Matches SVG's static feel */
+        }
+
+        /* 1. Header Title - Exact Top-Left Positioning from SVG */
+        .header-title {
+            position: absolute;
+            top: 59px;
+            left: 59px;
+            color: #004684;
+            font-size: 64px;
+            font-weight: 600;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        /* 2. Login Card Positioning */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding-top: 100px; /* Offset to feel balanced with the title */
+        }
+
+        .login-card {
+            background-color: #989898;
+            width: 750px; /* Exact SVG Width */
+            height: 915px; /* Exact SVG Height */
+            border: 7px solid #004684; /* Stroke from SVG */
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            padding-top: 60px;
+        }
+
+        h2 {
+            color: white;
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 20px;
+            font-weight: 200;
+            margin-top: 10px;
+            margin-bottom: 80px;
+        }
+
+        /* 3. Input Fields with Blue Focus Effect */
+        .input-group {
+            width: 694px; /* Exact SVG Width */
+            margin-bottom: 40px;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 51px; /* Exact SVG Height */
+            background-color: #F2F2F2;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            outline: none;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        /* The Blue Border Effect on click */
+        .input-field:focus {
+            border: 3px solid #004684;
+            box-shadow: 0 0 10px rgba(0, 70, 132, 0.3);
+        }
+
+        /* 4. Buttons */
+        .sign-in-btn {
+            width: 694px;
+            height: 51px;
+            background-color: #004684;
+            color: white;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .guest-btn {
+            width: 405px; /* Exact SVG Width for gold button */
+            height: 101px; /* Exact SVG Height for gold button */
+            background-color: #FDB827; /* Guest Gold */
+            color: white;
+            border-radius: 50px; /* Pill shape from rx="50" */
+            border: none;
+            font-size: 24px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 100px; /* Pushes to bottom of card like SVG */
+            transition: background-color 0.3s;
+        }
+
+        .guest-btn:hover {
+            background-color: #004684;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="header-title">Desk Occupancy<br>Detection System</h1>
+    
+
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Admin Login</h2>
+            <p class="subtitle">Please login or continue as guest</p>
+
+       <form action="{{ url_for('login') }}" method="POST" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <div class="input-group">
+            <input type="text" class="input-field" placeholder="Username" name="username">
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="password" class="input-field" placeholder="Password">
+        </div>
+
+        <button type="submit" class="sign-in-btn">Sign In</button>
+    </form>
+    <a href="{{ url_for('guest_login') }}" class="guest-btn">Continue as Guest</a>
+</div>
+
+</body>
+</html>
