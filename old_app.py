@@ -7,56 +7,39 @@ from datetime import datetime
 import time
 
 app = Flask(__name__)
-app.secret_key = 'cheese'
+app.secret_key = 'cheese' # required for sessions
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Hardcoded credentials 
+#hardcoded credentials for now
 admin_username = "admin"
 admin_password = "password"
 
-# Load YOLO model — swap to 'yolov8n.pt' if two feeds are too slow
+# Load YOLO model
 model = YOLO('yolov8x.pt')
 
-# --- Camera config ---
-# 0 = built-in webcam (floor 2), 1 = USB webcam (floor 3)
-# Swap these for RTSP URLs when you move to the Raspberry Pis
-CAMERAS = {
-    'floor2': 0,
-    'floor3': 1,
-}
+# Camera URL (Raspberry Pi MJPEG stream)
+camera_url = "rtsp://10.5.3.210:8554/webcam"
 
-# --- Desk zones per floor (percentages of frame) ---
-# Tune these to match each camera's actual view of the desks
+# Define desk zones (percentages of frame)
 desk_zones = {
-    'floor2': {
-        'Desk 1': [0.0, 0.0, 0.5, 0.5],
-        'Desk 2': [0.5, 0.0, 1.0, 0.5],
-        'Desk 3': [0.0, 0.5, 0.5, 1.0],
-        'Desk 4': [0.5, 0.5, 1.0, 1.0],
-    },
-    'floor3': {
-        'Desk 1': [0.0, 0.0, 0.5, 0.5],
-        'Desk 2': [0.5, 0.0, 1.0, 0.5],
-        'Desk 3': [0.0, 0.5, 0.5, 1.0],
-        'Desk 4': [0.5, 0.5, 1.0, 1.0],
-    },
+    'Desk 1': [0.0, 0.0, 0.5, 0.5],  # Top-left
+    'Desk 2': [0.5, 0.0, 1.0, 0.5],  # Top-right
+    'Desk 3': [0.0, 0.5, 0.5, 1.0],  # Bottom-left
+    'Desk 4': [0.5, 0.5, 1.0, 1.0],  # Bottom-right
 }
 
-# --- Global occupancy data per floor ---
+# Global occupancy data
 occupancy_data = {
-    'floor2': {
-        'desks': {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones['floor2']},
-        'total_people': 0,
-        'last_updated': None,
-    },
-    'floor3': {
-        'desks': {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones['floor3']},
-        'total_people': 0,
-        'last_updated': None,
-    },
+    'desks': {},
+    'total_people': 0,
+    'last_updated': None
 }
 
-# --- Helper functions ---
+# Initialize desk status
+initial_desk_status = {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones.keys()}
+occupancy_data['desks'] = initial_desk_status.copy()
+
+# Helper functions
 def get_zone_coordinates(zone_percentages, frame_width, frame_height):
     x1 = int(zone_percentages[0] * frame_width)
     y1 = int(zone_percentages[1] * frame_height)
@@ -71,13 +54,13 @@ def is_person_in_zone(box, zone_coords):
     zx1, zy1, zx2, zy2 = zone_coords
     return zx1 <= center_x <= zx2 and zy1 <= center_y <= zy2
 
-def draw_zones_and_detections(frame, results, desk_status, floor):
+def draw_zones_and_detections(frame, results, desk_status):
     annotated_frame = results[0].plot()
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale, thickness = 0.7, 2
     frame_height, frame_width = frame.shape[:2]
-
-    for desk_name, zone_percentages in desk_zones[floor].items():
+    
+    for desk_name, zone_percentages in desk_zones.items():
         x1, y1, x2, y2 = get_zone_coordinates(zone_percentages, frame_width, frame_height)
         occupied = desk_status[desk_name]['occupied']
         color = (0, 0, 255) if occupied else (0, 255, 0)
@@ -89,13 +72,13 @@ def draw_zones_and_detections(frame, results, desk_status, floor):
                     font, font_scale, (255, 255, 255), thickness)
     return annotated_frame
 
-def draw_zones(frame, desk_status, floor):
+def draw_zones(frame, desk_status):
     annotated_frame = frame.copy()
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale, thickness = 0.7, 2
     frame_height, frame_width = frame.shape[:2]
-
-    for desk_name, zone_percentages in desk_zones[floor].items():
+    
+    for desk_name, zone_percentages in desk_zones.items():
         x1, y1, x2, y2 = get_zone_coordinates(zone_percentages, frame_width, frame_height)
         occupied = desk_status[desk_name]['occupied']
         color = (0, 0, 255) if occupied else (0, 255, 0)
@@ -107,14 +90,12 @@ def draw_zones(frame, desk_status, floor):
                     font, font_scale, (255, 255, 255), thickness)
     return annotated_frame
 
-# --- Core frame generator (floor-aware) ---
-def generate_frames(floor):
-    camera_source = CAMERAS[floor]
-    cap = cv2.VideoCapture(camera_source)
-
+# --- Core: generate frames inside generator ---
+def generate_frames():
+    cap = cv2.VideoCapture(1)  # Open camera here
     if not cap.isOpened():
-        raise RuntimeError(f"Cannot open camera for {floor}: {camera_source}")
-
+        raise RuntimeError(f"Cannot open camera stream: {camera_url}")
+    
     ret, frame = cap.read()
     if ret:
         frame_height, frame_width = frame.shape[:2]
@@ -122,41 +103,40 @@ def generate_frames(floor):
         frame_height, frame_width = 480, 640
 
     last_update = 0
-    last_desk_status = {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones[floor]}
-
+    last_desk_status = initial_desk_status.copy()
+    
     while True:
         success, frame = cap.read()
         if not success:
             continue
-
+        
         current_time = time.time()
         if current_time - last_update >= 3:
+            # Run YOLO detection
             results = model(frame, conf=0.15, classes=[0], verbose=False)
-
-            desk_status = {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones[floor]}
-
+            
+            desk_status = {desk: {'occupied': False, 'people_count': 0} for desk in desk_zones.keys()}
+            
             if len(results[0].boxes) > 0:
                 for box in results[0].boxes:
                     x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
-                    for desk_name, zone_percentages in desk_zones[floor].items():
+                    for desk_name, zone_percentages in desk_zones.items():
                         zone_coords = get_zone_coordinates(zone_percentages, frame_width, frame_height)
                         if is_person_in_zone((x1, y1, x2, y2), zone_coords):
                             desk_status[desk_name]['occupied'] = True
                             desk_status[desk_name]['people_count'] += 1
-
+            
             last_desk_status = desk_status
-            occupancy_data[floor]['desks'] = desk_status
-            occupancy_data[floor]['total_people'] = len(results[0].boxes)
-            occupancy_data[floor]['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            # Emit floor-specific event so each page only reacts to its own data
-            socketio.emit(f'occupancy_update_{floor}', occupancy_data[floor])
-
+            occupancy_data['desks'] = desk_status
+            occupancy_data['total_people'] = len(results[0].boxes)
+            occupancy_data['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            socketio.emit('occupancy_update', occupancy_data)
+            
             last_update = current_time
-            annotated_frame = draw_zones_and_detections(frame, results, desk_status, floor)
+            annotated_frame = draw_zones_and_detections(frame, results, desk_status)
         else:
-            annotated_frame = draw_zones(frame, last_desk_status, floor)
-
+            annotated_frame = draw_zones(frame, last_desk_status)
+        
         ret, buffer = cv2.imencode('.jpg', annotated_frame)
         frame_bytes = buffer.tobytes()
         yield (b'--frame\r\n'
@@ -171,40 +151,14 @@ def landing():
 def library_floor2():
     return render_template('library_floor2.html')
 
-@app.route('/library_floor3')
-def library_floor3():
-    return render_template('library_floor3.html')
-
-# Separate video feed routes per floor
-@app.route('/video_feed/floor2')
-def video_feed_floor2():
-    return Response(generate_frames('floor2'),
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/video_feed/floor3')
-def video_feed_floor3():
-    return Response(generate_frames('floor3'),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-# Occupancy API — returns all floors, or a specific floor with ?floor=floor2
 @app.route('/api/occupancy')
 def get_occupancy():
-    floor = request.args.get('floor')
-    if floor and floor in occupancy_data:
-        return jsonify(occupancy_data[floor])
     return jsonify(occupancy_data)
-
-# Endpoint for Pi-based detectors to push results (future use)
-@app.route('/api/update_occupancy', methods=['POST'])
-def update_occupancy():
-    data = request.get_json()
-    floor = data.get('floor')
-    if not floor or floor not in occupancy_data:
-        return jsonify({'error': 'invalid floor'}), 400
-    occupancy_data[floor]['desks'] = data['desks']
-    occupancy_data[floor]['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    socketio.emit(f'occupancy_update_{floor}', occupancy_data[floor])
-    return jsonify({'status': 'ok'})
 
 @app.route('/index')
 def index():
@@ -212,26 +166,30 @@ def index():
 
 @app.route('/room_selection')
 def room_selection():
-    role = session.get('role', 'guest')
+    role = session.get('role', 'guest') # Default to guest if no role in session
     return render_template('room_selection.html', role=role)
 
 @app.route('/continue_as_guest')
 def continue_as_guest():
     return redirect(url_for('room_selection'))
 
+
 @app.route('/login', methods=['POST'])
 def login():
-    password = request.form.get('password')
-    if password == "password":
-        session['role'] = 'admin'
+    password = request.form.get('password') # Get password from the input field
+    
+    if password == "password": # Check against your hardcoded password
+        session['role'] = 'admin' # Give them the Admin "ID Card"
         return redirect(url_for('room_selection'))
     else:
+        # If password fails, you could redirect back or show an error
         return redirect(url_for('landing'))
 
 @app.route('/guest_login')
 def guest_login():
-    session['role'] = 'guest'
+    session['role'] = 'guest' # Give them a Guest "ID Card"
     return redirect(url_for('room_selection'))
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5001, use_reloader=False)

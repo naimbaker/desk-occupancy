@@ -51,14 +51,14 @@
 </head>
 <body>
 
-    <h1>Library Map</h1>
+    <h1>Library 2nd Floor Map</h1>
     <div style="margin-bottom: 20px; display: flex; gap: 10px;">
         <a href="{{ url_for('room_selection') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Return to room selection</a>
         
     </div>
 
     <div id="cameraContainer" style="display: none; margin-bottom: 20px; text-align: center;">
-        <img id="videoFeed" src="{{ url_for('video_feed') }}" style="width: 640px; border: 3px solid #1e293b; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <img id="videoFeed" src="{{ url_for('video_feed_floor2') }}">" style="width: 640px; border: 3px solid #1e293b; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
     </div>
 
     
@@ -222,7 +222,7 @@
 
 
 <!-- Scripts for socet.io and real-time updates. -->
-<script>
+<!-- <script>
         const socket = io();
         const toggleBtn = document.getElementById('toggleCamera');
         const cameraDiv = document.getElementById('cameraContainer');
@@ -251,8 +251,26 @@
                 }
             }
         });
-    </script>
+    </script> -->
 
+    
+<script>
+    const socket = io();
+    const cameraDiv = document.getElementById('cameraContainer');
+
+    // Occupancy logic
+socket.on('occupancy_update_floor2', function(data) {
+        console.log("Update received:", data);
+        for (const [deskName, deskInfo] of Object.entries(data.desks)) {
+            const deskNum = deskName.split(' ')[1];
+            let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
+            const deskElement = document.getElementById(elementId);
+            if (deskElement) {
+                deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : 'white');
+            }
+        }
+    });
+</script>
 
 
 </body>
