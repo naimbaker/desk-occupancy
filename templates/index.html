@@ -141,7 +141,7 @@
                 <div class="feed-floor-name">CAM 1</div>
                 <div class="feed-people-count">People detected: <span id="people-cam1">0</span></div>
             </div>
-            <img src="{{ url_for('video_feed') }}" alt="Floor 2 Camera Feed">
+            <img src="{{ url_for('video_feed', cam_id = 'cam1') }}" alt="Floor 2 Camera Feed">
             <div class="feed-footer">Last updated: <span id="timestamp-cam1">—</span></div>
         </div>
 
@@ -151,7 +151,7 @@
                 <div class="feed-floor-name">CAM 2</div>
                 <div class="feed-people-count">People detected: <span id="people-cam2">0</span></div>
             </div>
-            <img src="{{ url_for('video_feed') }}" alt="Floor 3 Camera Feed">
+            <img src="{{ url_for('video_feed', cam_id = 'cam2') }}" alt="Floor 3 Camera Feed">
             <div class="feed-footer">Last updated: <span id="timestamp-cam2">—</span></div>
         </div>
 
