@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 
 app = Flask(__name__)
+app.secret_key = 'cheese'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Credentials
