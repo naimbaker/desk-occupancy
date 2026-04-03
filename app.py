@@ -21,8 +21,7 @@ model = YOLO('yolov8x.pt')
 # 0 = built-in webcam (floor 2), 1 = USB webcam (floor 3)
 # Swap these for RTSP URLs when you move to the Raspberry Pis
 CAMERAS = {
-    'floor2': 0,
-    'floor3': 1,
+    'cam1': "rtsp://10.5.3.210:8554/webcam"
 }
 
 # --- Desk zones per floor (percentages of frame) ---
