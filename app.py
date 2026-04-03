@@ -58,7 +58,8 @@ def generate_frames(cam_id):
     cap = cv2.VideoCapture(camera_source)
     
     last_yolo_time = 0
-    
+    current_status = {} # Keep track of status to draw colors
+
     while True:
         success, frame = cap.read()
         if not success:
@@ -69,34 +70,36 @@ def generate_frames(cam_id):
         h, w = frame.shape[:2]
         current_time = time.time()
 
-        # Run YOLO every 2 seconds to keep the server fast
         if current_time - last_yolo_time >= 2:
             results = model(frame, conf=0.15, classes=[0], verbose=False)
-            
-            # Reset status
             new_status = {desk: {'occupied': False} for desk in desk_zones[cam_id]}
             
-            # Detection logic
             for box in results[0].boxes:
                 coords = box.xyxy[0].cpu().numpy()
                 cx, cy = (coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2
-
                 for desk_name, zone_pct in desk_zones[cam_id].items():
-                    zx1, zy1 = int(zone_pct[0] * w), int(zone_pct[1] * h)
-                    zx2, zy2 = int(zone_pct[2] * w), int(zone_pct[3] * h)
-
+                    zx1, zy1, zx2, zy2 = int(zone_pct[0]*w), int(zone_pct[1]*h), int(zone_pct[2]*w), int(zone_pct[3]*h)
                     if zx1 <= cx <= zx2 and zy1 <= cy <= zy2:
                         new_status[desk_name]['occupied'] = True
 
-            # Update Global Data
             occupancy_data[cam_id]['desks'] = new_status
             occupancy_data[cam_id]['total_people'] = len(results[0].boxes)
             occupancy_data[cam_id]['last_updated'] = datetime.now().strftime("%H:%M:%S")
-            
             socketio.emit(f'occupancy_update_{cam_id}', occupancy_data[cam_id])
+            
+            current_status = new_status 
             last_yolo_time = current_time
 
-          
+        for desk_name, zone_pct in desk_zones[cam_id].items():
+            zx1, zy1 = int(zone_pct[0] * w), int(zone_pct[1] * h)
+            zx2, zy2 = int(zone_pct[2] * w), int(zone_pct[3] * h)
+            
+            is_occ = current_status.get(desk_name, {}).get('occupied', False)
+            color = (0, 0, 255) if is_occ else (0, 255, 0)
+            
+            cv2.rectangle(frame, (zx1, zy1), (zx2, zy2), color, 2)
+            cv2.putText(frame, desk_name, (zx1 + 5, zy1 + 20), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         ret, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
@@ -118,6 +121,7 @@ def login():
 @app.route('/index')
 def index():
     return render_template('index.html')
+
 
 @app.route('/guest_login')
 def guest_login():
