@@ -259,7 +259,7 @@
     const cameraDiv = document.getElementById('cameraContainer');
 
     // Occupancy logic
-socket.on('occupancy_update_floor2', function(data) {
+socket.on('occupancy_update_cam1', function(data) {
         console.log("Update received:", data);
         for (const [deskName, deskInfo] of Object.entries(data.desks)) {
             const deskNum = deskName.split(' ')[1];
