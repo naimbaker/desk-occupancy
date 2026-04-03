@@ -108,10 +108,16 @@ def landing(): return render_template('landing.html')
 
 @app.route('/login', methods=['POST'])
 def login():
-    if request.form.get('password') == admin_password:
+    password = request.form.get('password')
+    if password == admin_password:
         session['role'] = 'admin'
         return redirect(url_for('room_selection'))
-    return redirect(url_for('landing'))
+    else:
+        return redirect(url_for('landing'))
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 @app.route('/guest_login')
 def guest_login():
