@@ -10,6 +10,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Credentials
+secret_key = "cheese"
 admin_password = "password"
 
 model = YOLO('yolov8n.pt') 
@@ -28,7 +29,7 @@ desk_zones = {
         'Desk 3': [0.0, 0.5, 0.5, 1.0],
         'Desk 4': [0.5, 0.5, 1.0, 1.0],
     },
-    'cam3': {
+    'cam2': {
         'Desk 1': [0.0, 0.0, 0.5, 0.5],
         'Desk 2': [0.5, 0.0, 1.0, 0.5],
         'Desk 3': [0.0, 0.5, 0.5, 1.0],
@@ -43,7 +44,7 @@ occupancy_data = {
         'total_people': 0,
         'last_updated': None,
     },
-    'cam3': {
+    'cam2': {
         'desks': {desk: {'occupied': False} for desk in desk_zones['cam3']},
         'total_people': 0,
         'last_updated': None,
@@ -110,6 +111,11 @@ def login():
         session['role'] = 'admin'
         return redirect(url_for('room_selection'))
     return redirect(url_for('landing'))
+
+@app.route('/guest_login')
+def guest_login():
+    session['role'] = 'guest' # Give them a Guest "ID Card"
+    return redirect(url_for('room_selection'))
 
 @app.route('/room_selection')
 def room_selection():
