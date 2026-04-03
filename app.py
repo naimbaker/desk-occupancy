@@ -18,7 +18,7 @@ model = YOLO('yolov8n.pt')
 # --- 1. CAMERA CONFIG ---
 CAMERAS = {
     'cam1': "rtsp://10.5.3.210:8554/webcam",
-    'cam3': "rtsp://10.5.3.211:8554/webcam"
+    'cam2': "rtsp://10.5.3.211:8554/webcam"
 }
 
 # --- 2. DESK ZONES ---
@@ -45,7 +45,7 @@ occupancy_data = {
         'last_updated': None,
     },
     'cam2': {
-        'desks': {desk: {'occupied': False} for desk in desk_zones['cam3']},
+        'desks': {desk: {'occupied': False} for desk in desk_zones['cam2']},
         'total_people': 0,
         'last_updated': None,
     },
