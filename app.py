@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from datetime import datetime
 import time
+import threading
 
 app = Flask(__name__)
 app.secret_key = 'cheese'
@@ -52,19 +53,74 @@ occupancy_data = {
     },
 }
 
-# --- 4. THE GENERATOR FUNCTION ---
+# --- 4. PERSISTENT CAMERA MANAGER ---
+class CameraStream:
+    def __init__(self, source):
+        self.source = source
+        self.frame = None
+        self.lock = threading.Lock()
+        self.running = False
+        self.thread = None
+
+    def start(self):
+        if self.running:
+            return
+        self.running = True
+        self.thread = threading.Thread(target=self._capture_loop, daemon=True)
+        self.thread.start()
+
+    def _capture_loop(self):
+        cap = None
+        while self.running:
+            if cap is None or not cap.isOpened():
+                print(f"[CameraStream] Connecting to {self.source}...")
+                cap = cv2.VideoCapture(self.source)
+                if not cap.isOpened():
+                    print(f"[CameraStream] Failed to connect to {self.source}, retrying in 2s...")
+                    time.sleep(2)
+                    continue
+                print(f"[CameraStream] Connected to {self.source}")
+
+            success, frame = cap.read()
+            if not success:
+                print(f"[CameraStream] Lost connection to {self.source}, retrying...")
+                cap.release()
+                cap = None
+                time.sleep(1)
+                continue
+
+            with self.lock:
+                self.frame = frame
+
+    def get_frame(self):
+        with self.lock:
+            return self.frame.copy() if self.frame is not None else None
+
+    def stop(self):
+        self.running = False
+
+
+# Start all streams at app launch — TCP handshake happens ONCE on startup
+camera_streams = {
+    cam_id: CameraStream(source)
+    for cam_id, source in CAMERAS.items()
+}
+
+for stream in camera_streams.values():
+    stream.start()
+
+
+# --- 5. THE GENERATOR FUNCTION ---
 def generate_frames(cam_id):
-    camera_source = CAMERAS.get(cam_id)
-    cap = cv2.VideoCapture(camera_source)
-    
+    stream = camera_streams[cam_id]
+
     last_yolo_time = 0
-    current_status = {} # Keep track of status to draw colors
+    current_status = {}
 
     while True:
-        success, frame = cap.read()
-        if not success:
-            time.sleep(1)
-            cap = cv2.VideoCapture(camera_source)
+        frame = stream.get_frame()
+        if frame is None:
+            time.sleep(0.05)
             continue
 
         h, w = frame.shape[:2]
@@ -73,7 +129,7 @@ def generate_frames(cam_id):
         if current_time - last_yolo_time >= 2:
             results = model(frame, conf=0.15, classes=[0], verbose=False)
             new_status = {desk: {'occupied': False} for desk in desk_zones[cam_id]}
-            
+
             for box in results[0].boxes:
                 coords = box.xyxy[0].cpu().numpy()
                 cx, cy = (coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2
@@ -86,26 +142,27 @@ def generate_frames(cam_id):
             occupancy_data[cam_id]['total_people'] = len(results[0].boxes)
             occupancy_data[cam_id]['last_updated'] = datetime.now().strftime("%H:%M:%S")
             socketio.emit(f'occupancy_update_{cam_id}', occupancy_data[cam_id])
-            
-            current_status = new_status 
+
+            current_status = new_status
             last_yolo_time = current_time
 
         for desk_name, zone_pct in desk_zones[cam_id].items():
             zx1, zy1 = int(zone_pct[0] * w), int(zone_pct[1] * h)
             zx2, zy2 = int(zone_pct[2] * w), int(zone_pct[3] * h)
-            
+
             is_occ = current_status.get(desk_name, {}).get('occupied', False)
             color = (0, 0, 255) if is_occ else (0, 255, 0)
-            
+
             cv2.rectangle(frame, (zx1, zy1), (zx2, zy2), color, 2)
-            cv2.putText(frame, desk_name, (zx1 + 5, zy1 + 20), 
+            cv2.putText(frame, desk_name, (zx1 + 5, zy1 + 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         ret, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-# --- 5. ROUTES ---
+
+# --- 6. ROUTES ---
 @app.route('/')
 def landing(): return render_template('landing.html')
 
@@ -122,10 +179,9 @@ def login():
 def index():
     return render_template('index.html')
 
-
 @app.route('/guest_login')
 def guest_login():
-    session['role'] = 'guest' # Give them a Guest "ID Card"
+    session['role'] = 'guest'
     return redirect(url_for('room_selection'))
 
 @app.route('/room_selection')
