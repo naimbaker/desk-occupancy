@@ -19,7 +19,7 @@ model = YOLO('yolov8n.pt')
 # --- 1. CAMERA CONFIG ---
 CAMERAS = {
     'cam1': "udp://@:1234",
-    'cam2': "udp://@:5000"
+    'cam2': "tcp://100.92.192.66:5000"
 }
 
 # --- 2. DESK ZONES ---
