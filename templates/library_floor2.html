@@ -47,6 +47,12 @@
             pointer-events: none; 
             user-select: none;
         }
+
+        .highlight-desk {
+            stroke: #fdb927 !important; 
+            stroke-width: 8px !important;
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +69,18 @@
 
     
     <div class="container">
+        {% if session.get('role') == 'admin' %}
+<div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
+    <button id="btn-cam1" class="admin-btn">Show Feed: Desks 1-4</button>
+    <button id="btn-cam2" class="admin-btn">Show Feed: Desks 5-8</button>
+</div>
+
+<div id="video-wrapper" style="display: none; text-align: center; margin-bottom: 20px;">
+    <h3 id="cam-label" style="color: #004684; margin-bottom: 10px;">Camera Feed</h3>
+    <img id="active-video-feed" src="" style="width: 100%; max-width: 800px; border: 5px solid #004684; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+</div>
+{% endif %}
+
        <svg width="2562" height="2732" viewBox="0 0 2562 2732" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="2562" height="2732" fill="#F5F5F5"/>
 <g id="library-floorplan" clip-path="url(#clip0_0_1)" filter="url(#filter0_d_0_1)">
@@ -218,41 +236,6 @@
     
     </div>
 
-
-
-
-<!-- Scripts for socet.io and real-time updates. -->
-<!-- <script>
-        const socket = io();
-        const toggleBtn = document.getElementById('toggleCamera');
-        const cameraDiv = document.getElementById('cameraContainer');
-        const videoImg = document.getElementById('videoFeed');
-
-       // button toggle logic for camera feed
-        toggleBtn.addEventListener('click', () => {
-            if (cameraDiv.style.display === 'none') {
-                cameraDiv.style.display = 'block';
-                toggleBtn.textContent = 'Hide Camera Feed';
-            } else {
-                cameraDiv.style.display = 'none';
-                toggleBtn.textContent = 'Show Camera Feed';
-            }
-        });
-
-        // Occupancy logic 
-        socket.on('occupancy_update', function(data) {
-            console.log("Update received:", data);
-            for (const [deskName, deskInfo] of Object.entries(data.desks)) {
-                const deskNum = deskName.split(' ')[1];
-                let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
-                const deskElement = document.getElementById(elementId);
-                if (deskElement) {
-                    deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : 'white');
-                }
-            }
-        });
-    </script> -->
-
     
 <script>
     const socket = io();
@@ -270,6 +253,49 @@ socket.on('occupancy_update_cam1', function(data) {
             }
         }
     });
+
+{% if session.get('role') == 'admin' %}
+            const videoWrapper = document.getElementById('video-wrapper');
+            const videoImg = document.getElementById('active-video-feed');
+            const camLabel = document.getElementById('cam-label');
+
+            function toggleFeed(camId, label) {
+    const videoWrapper = document.getElementById('video-wrapper');
+    const videoImg = document.getElementById('active-video-feed');
+    const camLabel = document.getElementById('cam-label');
+
+    document.querySelectorAll('rect[id^="desk-shape"]').forEach(rect => {
+        rect.classList.remove('highlight-desk');
+    });
+
+    if (videoWrapper.style.display === 'block' && videoImg.src.includes(camId)) {
+        videoWrapper.style.display = 'none';
+        videoImg.src = "";
+    } else {
+        videoWrapper.style.display = 'block';
+        videoImg.src = `/video_feed/${camId}`;
+        camLabel.textContent = "Live View: " + label;
+
+        let start = (camId === 'cam1') ? 1 : 5;
+        let end = (camId === 'cam1') ? 4 : 8;
+
+        for (let i = start; i <= end; i++) {
+            let elementId = (i === 1) ? "desk-shape" : `desk-shape_${i}`;
+            const deskElement = document.getElementById(elementId);
+            if (deskElement) {
+                deskElement.classList.add('highlight-desk');
+            }
+        }
+    }
+}
+
+            document.getElementById('btn-cam1').addEventListener('click', () => toggleFeed('cam1', 'Desks 1-4'));
+            document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-8'));
+        {% endif %}
+
+
+
+    
 </script>
 
 
