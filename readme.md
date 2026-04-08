@@ -23,12 +23,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Connect Camera
-- Install Camo Studio on your phone and Mac
-- Connect your phone via Camo
-- Run `find_camera.py` to find your camera index
-- Update `camera_index` in `app.py` with the correct number
-
 ### 5. Run the Application
 ```bash
 python app.py

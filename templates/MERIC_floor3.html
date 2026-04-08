@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
+
+    <title> MERIC 3rd Floor</title>
+    <style>
+        body {
+            font-family: 'Montserrat', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 95vw;
+            max-width: 1800px; 
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+            max-height: 120vh;
+            display: block;
+        }
+        /* Interactivity Styles */
+        rect[id^="desk-shape"] {
+            cursor: pointer;
+            transition: fill 0.2s ease;
+        }
+        rect[id^="desk-shape"]:hover {
+            stroke: #3b82f6;
+            stroke-width: 5px;
+        }
+        text {
+            pointer-events: none; 
+            user-select: none;
+        }
+
+        .highlight-desk {
+            stroke: #fdb927 !important; 
+            stroke-width: 8px !important;
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    
+<h1>MERIC 3rd Floor Map</h1>
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('room_selection') }}" style="padding: 10px; background: #ddd; text-decoration: none; border-radius: 5px; color: black;">Return to room selection</a>
+        
+    </div>
+    
+</body>

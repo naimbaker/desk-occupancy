@@ -32,10 +32,12 @@ desk_zones = {
         'Desk 4': [0.5, 0.5, 1.0, 1.0],
     },
     'cam2': {
-        'Desk 5': [0.0, 0.0, 0.5, 0.5],
-        'Desk 6': [0.5, 0.0, 1.0, 0.5],
-        'Desk 7': [0.0, 0.5, 0.5, 1.0],
-        'Desk 8': [0.5, 0.5, 1.0, 1.0],
+        'Desk 1': [0.0, 0.0, 0.5, 0.5],
+        'Desk 2': [0.5, 0.0, 1.0, 0.5],
+        'Desk 3': [0.0, 0.5, 0.5, 1.0],
+        'Desk 4': [0.5, 0.5, 1.0, 1.0],
+        'Desk 5': [0.25, 0.25, 0.75, 0.75],
+        'Desk 6': [0.0, 0.0, 1.0, 1.0],
     },
 }
 
@@ -189,7 +191,8 @@ def room_selection():
     return render_template('room_selection.html', role=session.get('role', 'guest'))
 
 @app.route('/library_floor2')
-def library_floor2(): return render_template('library_floor2.html')
+def library_floor2(): 
+    return render_template('library_floor2.html')
 
 @app.route('/video_feed/<cam_id>')
 def video_feed(cam_id):
@@ -198,6 +201,10 @@ def video_feed(cam_id):
 @app.route('/api/occupancy')
 def get_occupancy():
     return jsonify(occupancy_data)
+
+@app.route('/meric_floor3')
+def meric_floor3():
+    return render_template('MERIC_floor3.html')
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5001)
