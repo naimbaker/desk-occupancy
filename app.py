@@ -15,7 +15,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 secret_key = "cheese"
 admin_password = "password"
 
-model = YOLO('yolov8n.pt') 
+model = YOLO('yolov26x.pt') 
 
 # --- 1. CAMERA CONFIG ---
 CAMERAS = {
