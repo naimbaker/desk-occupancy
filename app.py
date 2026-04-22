@@ -155,7 +155,7 @@ def generate_frames(cam_id):
             occupancy_data[cam_id]['desks'] = new_status
             occupancy_data[cam_id]['total_people'] = len(results[0].boxes)
             occupancy_data[cam_id]['last_updated'] = datetime.now().strftime("%H:%M:%S")
-            socketio.emit(f'occupancy_update_{cam_id}', occupancy_data[cam_id])
+            socketio.emit('occupancy_update', occupancy_data[cam_id])
 
             current_status = new_status
             last_yolo_time = current_time

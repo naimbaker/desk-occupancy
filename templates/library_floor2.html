@@ -744,18 +744,22 @@
     const socket = io();
     const cameraDiv = document.getElementById('cameraContainer');
 
-    // Occupancy logic
-socket.on('occupancy_update_cam1', function(data) {
-        console.log("Update received:", data);
-        for (const [deskName, deskInfo] of Object.entries(data.desks)) {
-            const deskNum = deskName.split(' ')[1];
-            let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
-            const deskElement = document.getElementById(elementId);
-            if (deskElement) {
-                deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : '00F265');
-            }
+ socket.on('occupancy_update', (data) => {
+    console.log("Received update:", data);
+    
+    Object.keys(data.desks).forEach(deskName => {
+        const isOccupied = data.desks[deskName].occupied;
+        
+        const idNum = deskName.split(' ')[1];
+        
+        const elementId = idNum === "1" ? "desk-shape" : `desk-shape_${idNum}`;
+        const deskElement = document.getElementById(elementId);
+        
+        if (deskElement) {
+            deskElement.style.fill = isOccupied ? "red" : "#00F265";
         }
     });
+});
 
 {% if session.get('role') == 'admin' %}
             const videoWrapper = document.getElementById('video-wrapper');
