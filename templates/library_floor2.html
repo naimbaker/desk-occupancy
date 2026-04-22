@@ -752,7 +752,7 @@ socket.on('occupancy_update_cam1', function(data) {
             let elementId = (deskNum === "1") ? "desk-shape" : `desk-shape_${deskNum}`;
             const deskElement = document.getElementById(elementId);
             if (deskElement) {
-                deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : 'white');
+                deskElement.setAttribute('fill', deskInfo.occupied ? '#ef4444' : '00F265');
             }
         }
     });
