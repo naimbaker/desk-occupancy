@@ -73,6 +73,8 @@
 <div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
     <button id="btn-cam1" class="admin-btn">Show Feed: Desks 1-4</button>
     <button id="btn-cam2" class="admin-btn">Show Feed: Desks 5-8</button>
+    <button id="btn-cam3" class="admin-btn">Show Feed: Desks 9-12</button>
+
 </div>
 
 <div id="video-wrapper" style="display: none; text-align: center; margin-bottom: 20px;">
@@ -777,8 +779,13 @@ socket.on('occupancy_update_cam1', function(data) {
         videoImg.src = `/video_feed/${camId}`;
         camLabel.textContent = "Live View: " + label;
 
-        let start = (camId === 'cam1') ? 1 : 5;
-        let end = (camId === 'cam1') ? 4 : 8;
+        let start, end;
+        if (camId === 'cam1') {
+            start = 1; end = 4;
+        } else if (camId === 'cam2') {
+            start = 5; end = 8;
+        } else if (camId === 'cam3') {
+            start = 9; end = 12;
 
         for (let i = start; i <= end; i++) {
             let elementId = (i === 1) ? "desk-shape" : `desk-shape_${i}`;
@@ -792,6 +799,8 @@ socket.on('occupancy_update_cam1', function(data) {
 
             document.getElementById('btn-cam1').addEventListener('click', () => toggleFeed('cam1', 'Desks 1-4'));
             document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-8'));
+            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 7-8'));
+
         {% endif %}
 
 
