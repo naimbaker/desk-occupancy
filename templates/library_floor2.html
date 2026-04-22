@@ -50,9 +50,13 @@
 
         .highlight-desk {
             stroke: #fdb927 !important; 
-            stroke-width: 8px !important;
+            stroke-width: 12px !important;
             transition: stroke 0.3s ease, stroke-width 0.3s ease;
         }
+        rect[id^="desk-shape"]:hover {
+        filter: brightness(1.2);
+        cursor: pointer;
+}
     </style>
 </head>
 <body>
@@ -72,8 +76,8 @@
         {% if session.get('role') == 'admin' %}
 <div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
     <button id="btn-cam1" class="admin-btn">Show Feed: Desks 1-4</button>
-    <button id="btn-cam2" class="admin-btn">Show Feed: Desks 5-8</button>
-    <button id="btn-cam3" class="admin-btn">Show Feed: Desks 9-12</button>
+    <button id="btn-cam2" class="admin-btn">Show Feed: Desks 5-10</button>
+    <button id="btn-cam3" class="admin-btn">Show Feed: Desks 11-14</button>
 
 </div>
 
@@ -787,9 +791,9 @@
         if (camId === 'cam1') {
             start = 1; end = 4;
         } else if (camId === 'cam2') {
-            start = 5; end = 8;
+            start = 5; end = 10;
         } else if (camId === 'cam3') {
-            start = 9; end = 12;
+            start = 11; end = 14;
         }
         for (let i = start; i <= end; i++) {
             let elementId = (i === 1) ? "desk-shape" : `desk-shape_${i}`;
@@ -802,8 +806,8 @@
 }
 
             document.getElementById('btn-cam1').addEventListener('click', () => toggleFeed('cam1', 'Desks 1-4'));
-            document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-8'));
-            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 9-12'));
+            document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-10'));
+            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 11-14'));
 
         {% endif %}
 
