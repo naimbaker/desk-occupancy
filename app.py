@@ -20,7 +20,8 @@ model = YOLO('yolo26x.pt')
 # --- 1. CAMERA CONFIG ---
 CAMERAS = {
     'cam1': "tcp://100.124.117.122:1234",
-    'cam2': "tcp://100.92.192.66:5000"
+    'cam2': "tcp://100.92.192.66:5000",
+    'cam3':  "tcp://"
 }
 
 # --- 2. DESK ZONES ---
@@ -38,7 +39,13 @@ desk_zones = {
     'Desk 4': [0.50, 0.05, 0.95, 0.35],
     'Desk 5': [0.50, 0.37, 0.95, 0.62],
     'Desk 6': [0.50, 0.64, 0.95, 0.95],
-}
+},
+'cam3': {
+        'Desk 1': [0.0, 0.0, 0.5, 0.5],
+        'Desk 2': [0.5, 0.0, 1.0, 0.5],
+        'Desk 3': [0.0, 0.5, 0.5, 1.0],
+        'Desk 4': [0.5, 0.5, 1.0, 1.0],
+    }
 }
 
 # --- 3. GLOBAL DATA STORAGE ---
@@ -50,6 +57,11 @@ occupancy_data = {
     },
     'cam2': {
         'desks': {desk: {'occupied': False} for desk in desk_zones['cam2']},
+        'total_people': 0,
+        'last_updated': None,
+    },
+    'cam3': {
+        'desks': {desk: {'occupied': False} for desk in desk_zones['cam3']},
         'total_people': 0,
         'last_updated': None,
     },
