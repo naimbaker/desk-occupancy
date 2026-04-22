@@ -786,7 +786,7 @@ socket.on('occupancy_update_cam1', function(data) {
             start = 5; end = 8;
         } else if (camId === 'cam3') {
             start = 9; end = 12;
-
+        }
         for (let i = start; i <= end; i++) {
             let elementId = (i === 1) ? "desk-shape" : `desk-shape_${i}`;
             const deskElement = document.getElementById(elementId);
@@ -799,7 +799,7 @@ socket.on('occupancy_update_cam1', function(data) {
 
             document.getElementById('btn-cam1').addEventListener('click', () => toggleFeed('cam1', 'Desks 1-4'));
             document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-8'));
-            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 7-8'));
+            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 9-12'));
 
         {% endif %}
 
