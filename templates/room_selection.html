@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,12 +16,12 @@
             font-family: 'Montserrat', sans-serif;
             display: block;
         }
-
+ 
         .header-container {
             padding: 60px 0 0 60px;
             text-align: left;
         }
-
+ 
         h1 {
             color: #004684;
             font-size: 64px;
@@ -26,14 +29,14 @@
             line-height: 1.1;
             margin: 0;
         }
-
+ 
         .content-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
         }
-
+ 
         h2 {
             text-decoration: underline;
             text-decoration-color: #fdb927;
@@ -42,7 +45,7 @@
             font-weight: 200;
             margin: 80px 0 50px 0;
         }
-
+ 
         /* --- Building Card Wrapper --- */
         .building-card {
             width: 1111px;
@@ -50,7 +53,7 @@
             border: 2px solid black;
             overflow: hidden;
         }
-
+ 
         /* --- Clickable Banner --- */
         .building-banner {
             display: block;
@@ -62,14 +65,14 @@
             overflow: hidden;
             text-decoration: none;
         }
-
+ 
         .building-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
-
+ 
         /* Blue mask overlay */
         .building-banner::after {
             content: "";
@@ -79,11 +82,11 @@
             transition: background-color 0.3s ease;
             z-index: 1;
         }
-
+ 
         .building-banner:hover::after {
             background-color: rgba(0, 70, 132, 0.7);
         }
-
+ 
         .label-text {
             position: absolute;
             top: 50%;
@@ -98,12 +101,12 @@
             width: 100%;
             pointer-events: none;
         }
-
+ 
         .building-banner:hover .label-text {
             color: #fdb927;
             transition: color 0.3s ease;
         }
-
+ 
         /* Chevron icon on banner */
         .chevron {
             position: absolute;
@@ -115,11 +118,11 @@
             transition: transform 0.3s ease;
             pointer-events: none;
         }
-
+ 
         .building-card.open .chevron {
             transform: rotate(180deg);
         }
-
+ 
         /* --- Floor Dropdown --- */
         .floor-dropdown {
             max-height: 0;
@@ -127,11 +130,11 @@
             transition: max-height 0.35s ease;
             background-color: white;
         }
-
+ 
         .building-card.open .floor-dropdown {
             max-height: 300px;
         }
-
+ 
         /* Individual floor row */
         .floor-row {
             display: flex;
@@ -146,34 +149,34 @@
             transition: background-color 0.2s ease;
             cursor: pointer;
         }
-
+ 
         .floor-row:hover:not(.floor-disabled) {
             background-color: #c8c8c8;
         }
-
+ 
         .floor-row.floor-disabled {
             cursor: not-allowed;
             opacity: 0.6;
         }
-
+ 
         .floor-name {
             font-size: 18px;
             font-weight: 400;
             color: #1a1a1a;
         }
-
+ 
         .floor-right {
             display: flex;
             align-items: center;
             gap: 14px;
         }
-
+ 
         .floor-availability {
             font-size: 16px;
             font-weight: 400;
             color: #1a1a1a;
         }
-
+ 
         /* Status dot */
         .status-dot {
             width: 14px;
@@ -181,23 +184,23 @@
             border-radius: 50%;
             flex-shrink: 0;
         }
-
+ 
         .dot-green  { background-color: #22c55e; }
         .dot-yellow { background-color: #eab308; }
         .dot-red    { background-color: #ef4444; }
         .dot-gray   { background-color: #9ca3af; }
-
-        /* --- Disabled Building Card (Engineering) --- */
+ 
+        /* --- Disabled Building Card --- */
         .building-card.disabled-btn {
             cursor: not-allowed;
             filter: grayscale(0.5);
             margin-bottom: 60px;
         }
-
+ 
         .building-card.disabled-btn .building-banner {
             cursor: not-allowed;
         }
-
+ 
         /* --- Back link --- */
         .back-link {
             color: #004684;
@@ -205,7 +208,7 @@
             text-decoration: underline;
             margin-top: 10px;
         }
-
+ 
         /* --- Admin link --- */
         .admin-link-container {
             margin-top: 20px;
@@ -217,27 +220,27 @@
     </style>
 </head>
 <body>
-
+ 
     <div class="header-container">
         <h1>Desk Occupancy<br>Detection System</h1>
     </div>
-
+ 
     <div class="content-wrapper">
         <h2>Select A Building to View Floorplans</h2>
-
+ 
         <!-- ===== F.D. BLUFORD LIBRARY ===== -->
         <div class="building-card" id="libraryCard">
-
+ 
             <!-- Clickable banner -->
             <div class="building-banner" onclick="toggleLibrary()">
                 <img src="{{ url_for('static', filename='images/library.png') }}" alt="Main Library" class="building-image">
                 <div class="label-text">F.D. BLUFORD LIBRARY</div>
                 <span class="chevron">&#x25BC;</span>
             </div>
-
+ 
             <!-- Floor dropdown -->
             <div class="floor-dropdown" id="libraryDropdown">
-
+ 
                 <!-- Floor 1 — no page yet -->
                 <div class="floor-row floor-disabled">
                     <span class="floor-name">First Floor</span>
@@ -246,8 +249,8 @@
                         <span class="status-dot dot-gray"></span>
                     </div>
                 </div>
-
-                <!-- Floor 2 — live page, fetch real data -->
+ 
+                <!-- Floor 2 — live page -->
                 <a href="{{ url_for('library_floor2') }}" class="floor-row" id="floor2Row">
                     <span class="floor-name">Second Floor</span>
                     <div class="floor-right">
@@ -255,7 +258,7 @@
                         <span class="status-dot" id="floor2Dot"></span>
                     </div>
                 </a>
-
+ 
                 <!-- Floor 3 — no page yet -->
                 <div class="floor-row floor-disabled">
                     <span class="floor-name">Third Floor</span>
@@ -264,28 +267,64 @@
                         <span class="status-dot dot-gray"></span>
                     </div>
                 </div>
-
+ 
             </div>
         </div>
-
-        <!-- ===== MARTIN ERIC ENGINEERING ===== -->
-        <div class="building-card disabled-btn">
-            <div class="building-banner" style="cursor:not-allowed;">
+ 
+        <!-- ===== MARTIN ERIC ENGINEERING BUILDING ===== -->
+        <div class="building-card" id="mericCard">
+ 
+            <!-- Clickable banner -->
+            <div class="building-banner" onclick="toggleMeric()">
                 <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Engineering" class="building-image">
                 <div class="label-text">MARTIN ERIC ENGINEERING BUILDING</div>
+                <span class="chevron">&#x25BC;</span>
+            </div>
+ 
+            <!-- Floor dropdown -->
+            <div class="floor-dropdown" id="mericDropdown">
+ 
+                <!-- Floor 1 — no page yet -->
+                <div class="floor-row floor-disabled">
+                    <span class="floor-name">First Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability">— Coming Soon</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                </div>
+ 
+                <!-- Floor 2 — no page yet -->
+                <div class="floor-row floor-disabled">
+                    <span class="floor-name">Second Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability">— Coming Soon</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                </div>
+ 
+                <!-- Floor 3 — live page -->
+                <a href="{{ url_for('meric_floor3') }}" class="floor-row" id="mericFloor3Row">
+                    <span class="floor-name">Third Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability" id="mericFloor3Availability">Loading…</span>
+                        <span class="status-dot" id="mericFloor3Dot"></span>
+                    </div>
+                </a>
+ 
             </div>
         </div>
-        
-         <div class="building-card disabled-btn">
+ 
+        <!-- ===== STUDENT CENTER ===== -->
+        <div class="building-card disabled-btn">
             <div class="building-banner" style="cursor:not-allowed;">
                 <img src="{{ url_for('static', filename='images/studentcenter.jpg') }}" alt="Student Center" class="building-image">
                 <div class="label-text">STUDENT CENTER</div>
             </div>
         </div>
-
+ 
         <br>
         <a href="{{ url_for('landing') }}" class="back-link">return to login</a>
-
+ 
         {% if role == 'admin' %}
         <div class="admin-link-container" style="margin-top: 20px;">
             <a href="{{ url_for('index') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
@@ -293,53 +332,88 @@
             </a>
         </div>
         {% endif %}
-
+ 
     </div>
-
+ 
     <script>
-        const TOTAL_DESKS = 28;
-
-        // Toggle the library dropdown open/closed
+        const LIBRARY_TOTAL_DESKS = 28;
+        const MERIC_FLOOR3_TOTAL_DESKS = 6;
+ 
+        /* ---- Toggle functions ---- */
         function toggleLibrary() {
-            const card = document.getElementById('libraryCard');
-            card.classList.toggle('open');
+            document.getElementById('libraryCard').classList.toggle('open');
         }
-
-        // Determine dot color class based on % available
+ 
+        function toggleMeric() {
+            document.getElementById('mericCard').classList.toggle('open');
+        }
+ 
+        /* ---- Dot color helper ---- */
         function getDotClass(available, total) {
             const pct = available / total;
             if (pct > 0.5)  return 'dot-green';
             if (pct > 0.25) return 'dot-yellow';
             return 'dot-red';
         }
-
-        // Fetch real occupancy data from the API for Floor 2
+ 
+        /* ---- Library Floor 2 occupancy ---- */
         async function loadFloor2Occupancy() {
             try {
                 const res = await fetch('/api/occupancy');
                 const data = await res.json();
-
+ 
                 const desks = data.desks || {};
-                const totalDesks = Object.keys(desks).length || TOTAL_DESKS;
+                const totalDesks = Object.keys(desks).length || LIBRARY_TOTAL_DESKS;
                 const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
                 const availableCount = totalDesks - occupiedCount;
-
+ 
                 document.getElementById('floor2Availability').textContent =
                     `${availableCount}/${totalDesks} Desks Available`;
-
+ 
                 const dot = document.getElementById('floor2Dot');
                 dot.className = 'status-dot ' + getDotClass(availableCount, totalDesks);
-
+ 
             } catch (err) {
                 document.getElementById('floor2Availability').textContent = 'Unavailable';
                 document.getElementById('floor2Dot').className = 'status-dot dot-gray';
             }
         }
-
-        // Load occupancy on page load and refresh every 30 seconds
+ 
+        /* ---- MERIC Floor 3 occupancy ---- */
+        async function loadMericFloor3Occupancy() {
+            try {
+                const res = await fetch('/api/occupancy/meric_floor3');
+                const data = await res.json();
+ 
+                const desks = data.desks || {};
+                const totalDesks = Object.keys(desks).length || MERIC_FLOOR3_TOTAL_DESKS;
+                const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
+                const availableCount = totalDesks - occupiedCount;
+ 
+                document.getElementById('mericFloor3Availability').textContent =
+                    `${availableCount}/${totalDesks} Desks Available`;
+ 
+                const dot = document.getElementById('mericFloor3Dot');
+                dot.className = 'status-dot ' + getDotClass(availableCount, totalDesks);
+ 
+            } catch (err) {
+                document.getElementById('mericFloor3Availability').textContent = 'Unavailable';
+                document.getElementById('mericFloor3Dot').className = 'status-dot dot-gray';
+            }
+        }
+ 
+        /* ---- Load on page load + refresh every 30s ---- */
         loadFloor2Occupancy();
+        loadMericFloor3Occupancy();
         setInterval(loadFloor2Occupancy, 30000);
+        setInterval(loadMericFloor3Occupancy, 30000);
     </script>
-
+ 
 </body>
 </html>
+ 
+
+
+
+
+
