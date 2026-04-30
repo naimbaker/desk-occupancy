@@ -19,9 +19,9 @@ model = YOLO('yolo26x.pt')
 
 # --- 1. CAMERA CONFIG ---
 CAMERAS = {
-    'cam1': "tcp://127.0.0.1:5002",
-    'cam2': "tcp://127.0.0.1:8080",
-    'cam3':  "tcp://127.0.0.1:5003"
+    'cam1': 1,
+    'cam2': 1,
+    'cam3': 1
 }
 
 # --- 2. DESK ZONES ---
@@ -155,7 +155,12 @@ def generate_frames(cam_id):
             occupancy_data[cam_id]['desks'] = new_status
             occupancy_data[cam_id]['total_people'] = len(results[0].boxes)
             occupancy_data[cam_id]['last_updated'] = datetime.now().strftime("%H:%M:%S")
-            socketio.emit('occupancy_update', occupancy_data[cam_id])
+            # Always include camera_id so each floorplan page can filter
+            # to only its own camera's events
+            socketio.emit('occupancy_update', {
+                **occupancy_data[cam_id],
+                'camera_id': cam_id
+            })
 
             current_status = new_status
             last_yolo_time = current_time
@@ -212,7 +217,15 @@ def video_feed(cam_id):
 
 @app.route('/api/occupancy')
 def get_occupancy():
+    # Returns all camera data — keyed by camera id
     return jsonify(occupancy_data)
+
+@app.route('/api/occupancy/<cam_id>')
+def get_occupancy_by_cam(cam_id):
+    # Returns data for a single camera, e.g. /api/occupancy/cam1
+    if cam_id not in occupancy_data:
+        return jsonify({'error': 'Unknown camera'}), 404
+    return jsonify(occupancy_data[cam_id])
 
 @app.route('/meric_floor3')
 def meric_floor3():

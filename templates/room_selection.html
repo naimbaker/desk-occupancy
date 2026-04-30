@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -359,7 +356,7 @@
         /* ---- Library Floor 2 occupancy ---- */
         async function loadFloor2Occupancy() {
             try {
-                const res = await fetch('/api/occupancy');
+                const res = await fetch('/api/occupancy/cam1');
                 const data = await res.json();
  
                 const desks = data.desks || {};
@@ -382,7 +379,7 @@
         /* ---- MERIC Floor 3 occupancy ---- */
         async function loadMericFloor3Occupancy() {
             try {
-                const res = await fetch('/api/occupancy/meric_floor3');
+                const res = await fetch('/api/occupancy/cam2');
                 const data = await res.json();
  
                 const desks = data.desks || {};
@@ -411,9 +408,3 @@
  
 </body>
 </html>
- 
-
-
-
-
-
