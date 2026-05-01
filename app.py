@@ -24,6 +24,20 @@ CAMERAS = {
     'cam3': 1
 }
 
+# --- 2. FLOORPLAN → CAMERA MAPPING ---
+# Keys are cam IDs, values are the button label shown in the admin UI.
+# To add a camera to a floor: add its cam_id and a label here.
+# To remove one: delete the entry. No HTML changes needed.
+FLOORPLAN_CAMERAS = {
+    'library_floor2': {
+        'cam1': 'Desks 1-4',
+        'cam3': 'Desks 5-8',
+    },
+    'meric_floor3': {
+        'cam2': 'Desks 1-6',
+    },
+}
+
 # --- 2. DESK ZONES ---
 desk_zones = {
     'cam1': {
@@ -33,18 +47,18 @@ desk_zones = {
         'Desk 4': [0.5, 0.5, 1.0, 1.0],
     },
     'cam2': {
-        'Desk 10': [0.65, 0.05, 0.95, 0.50],
-        'Desk 11': [0.38, 0.05, 0.63, 0.50],
-        'Desk 12': [0.05, 0.05, 0.36, 0.50],
-        'Desk 13': [0.65, 0.50, 0.95, 0.95],
-        'Desk 14': [0.38, 0.50, 0.63, 0.95],
-        'Desk 15': [0.05, 0.50, 0.36, 0.95],
+        'Desk 1': [0.65, 0.05, 0.95, 0.50],
+        'Desk 2': [0.38, 0.05, 0.63, 0.50],
+        'Desk 3': [0.05, 0.05, 0.36, 0.50],
+        'Desk 4': [0.65, 0.50, 0.95, 0.95],
+        'Desk 5': [0.38, 0.50, 0.63, 0.95],
+        'Desk 6': [0.05, 0.50, 0.36, 0.95],
     },
     'cam3': {
-        'Desk 21': [0.0, 0.0, 0.5, 0.5],
-        'Desk 22': [0.5, 0.0, 1.0, 0.5],
-        'Desk 23': [0.0, 0.5, 0.5, 1.0],
-        'Desk 24': [0.5, 0.5, 1.0, 1.0],
+        'Desk 5': [0.0, 0.0, 0.5, 0.5],
+        'Desk 6': [0.5, 0.0, 1.0, 0.5],
+        'Desk 7': [0.0, 0.5, 0.5, 1.0],
+        'Desk 8': [0.5, 0.5, 1.0, 1.0],
     }
 }
 
@@ -155,8 +169,7 @@ def generate_frames(cam_id):
             occupancy_data[cam_id]['desks'] = new_status
             occupancy_data[cam_id]['total_people'] = len(results[0].boxes)
             occupancy_data[cam_id]['last_updated'] = datetime.now().strftime("%H:%M:%S")
-            # Always include camera_id so each floorplan page can filter
-            # to only its own camera's events
+            
             socketio.emit('occupancy_update', {
                 **occupancy_data[cam_id],
                 'camera_id': cam_id
@@ -194,9 +207,9 @@ def login():
     else:
         return redirect(url_for('landing'))
 
-@app.route('/index')
-def index():
-    return render_template('index.html')
+@app.route('/camera_dashboard')
+def camera_dashboard():
+    return render_template('camera_dashboard.html')
 
 @app.route('/guest_login')
 def guest_login():
@@ -208,8 +221,12 @@ def room_selection():
     return render_template('room_selection.html', role=session.get('role', 'guest'))
 
 @app.route('/library_floor2')
-def library_floor2(): 
-    return render_template('library_floor2.html')
+def library_floor2():
+    cameras = FLOORPLAN_CAMERAS.get('library_floor2', {})
+    # cam_desks maps each cam to its list of desk names so the
+    # template knows which desks to highlight per camera button
+    cam_desks = {cam: list(desk_zones[cam].keys()) for cam in cameras if cam in desk_zones}
+    return render_template('library_floor2.html', cameras=cameras, cam_desks=cam_desks)
 
 @app.route('/video_feed/<cam_id>')
 def video_feed(cam_id):
@@ -229,7 +246,19 @@ def get_occupancy_by_cam(cam_id):
 
 @app.route('/meric_floor3')
 def meric_floor3():
-    return render_template('MERIC_floor3.html')
+    cameras = FLOORPLAN_CAMERAS.get('meric_floor3', {})
+    cam_desks = {cam: list(desk_zones[cam].keys()) for cam in cameras if cam in desk_zones}
+    return render_template('MERIC_floor3.html', cameras=cameras, cam_desks=cam_desks)
+
+
+@app.route('/api/occupancy/floorplan/<floorplan_id>')
+def get_occupancy_by_floorplan(floorplan_id):
+    cameras = FLOORPLAN_CAMERAS.get(floorplan_id, {})
+    combined_desks = {}
+    for cam_id in cameras:
+        if cam_id in occupancy_data:
+            combined_desks.update(occupancy_data[cam_id]['desks'])
+    return jsonify({'desks': combined_desks})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5001)

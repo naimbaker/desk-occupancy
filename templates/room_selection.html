@@ -324,7 +324,7 @@
  
         {% if role == 'admin' %}
         <div class="admin-link-container" style="margin-top: 20px;">
-            <a href="{{ url_for('index') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
+            <a href="{{ url_for('camera_dashboard') }}" style="color: #FDB827; text-decoration: none; font-weight: 600; font-size: 14px;">
                 &rarr; OPEN SYSTEM DASHBOARD (ADMIN ONLY)
             </a>
         </div>
@@ -333,77 +333,75 @@
     </div>
  
     <script>
-        const LIBRARY_TOTAL_DESKS = 28;
-        const MERIC_FLOOR3_TOTAL_DESKS = 6;
- 
-        /* ---- Toggle functions ---- */
-        function toggleLibrary() {
-            document.getElementById('libraryCard').classList.toggle('open');
-        }
- 
-        function toggleMeric() {
-            document.getElementById('mericCard').classList.toggle('open');
-        }
- 
-        /* ---- Dot color helper ---- */
-        function getDotClass(available, total) {
-            const pct = available / total;
-            if (pct > 0.5)  return 'dot-green';
-            if (pct > 0.25) return 'dot-yellow';
-            return 'dot-red';
-        }
- 
-        /* ---- Library Floor 2 occupancy ---- */
-        async function loadFloor2Occupancy() {
-            try {
-                const res = await fetch('/api/occupancy/cam1');
-                const data = await res.json();
- 
-                const desks = data.desks || {};
-                const totalDesks = Object.keys(desks).length || LIBRARY_TOTAL_DESKS;
-                const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
-                const availableCount = totalDesks - occupiedCount;
- 
-                document.getElementById('floor2Availability').textContent =
-                    `${availableCount}/${totalDesks} Desks Available`;
- 
-                const dot = document.getElementById('floor2Dot');
-                dot.className = 'status-dot ' + getDotClass(availableCount, totalDesks);
- 
-            } catch (err) {
-                document.getElementById('floor2Availability').textContent = 'Unavailable';
-                document.getElementById('floor2Dot').className = 'status-dot dot-gray';
-            }
-        }
- 
-        /* ---- MERIC Floor 3 occupancy ---- */
-        async function loadMericFloor3Occupancy() {
-            try {
-                const res = await fetch('/api/occupancy/cam2');
-                const data = await res.json();
- 
-                const desks = data.desks || {};
-                const totalDesks = Object.keys(desks).length || MERIC_FLOOR3_TOTAL_DESKS;
-                const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
-                const availableCount = totalDesks - occupiedCount;
- 
-                document.getElementById('mericFloor3Availability').textContent =
-                    `${availableCount}/${totalDesks} Desks Available`;
- 
-                const dot = document.getElementById('mericFloor3Dot');
-                dot.className = 'status-dot ' + getDotClass(availableCount, totalDesks);
- 
-            } catch (err) {
-                document.getElementById('mericFloor3Availability').textContent = 'Unavailable';
-                document.getElementById('mericFloor3Dot').className = 'status-dot dot-gray';
-            }
-        }
- 
-        /* ---- Load on page load + refresh every 30s ---- */
-        loadFloor2Occupancy();
-        loadMericFloor3Occupancy();
-        setInterval(loadFloor2Occupancy, 30000);
-        setInterval(loadMericFloor3Occupancy, 30000);
+      const LIBRARY_TOTAL_DESKS = 28;
+const MERIC_FLOOR3_TOTAL_DESKS = 6;
+
+/* ---- Toggle functions ---- */
+function toggleLibrary() {
+    document.getElementById('libraryCard').classList.toggle('open');
+}
+
+function toggleMeric() {
+    document.getElementById('mericCard').classList.toggle('open');
+}
+
+/* ---- Dot color helper ---- */
+function getDotClass(available, total) {
+    const pct = available / total;
+    if (pct > 0.5)  return 'dot-green';
+    if (pct > 0.25) return 'dot-yellow';
+    return 'dot-red';
+}
+
+/* ---- Library Floor 2 occupancy ---- */
+async function loadFloor2Occupancy() {
+    try {
+        const res = await fetch('/api/occupancy/floorplan/library_floor2');
+        const data = await res.json();
+
+        const desks = data.desks || {};
+        const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
+        const availableCount = LIBRARY_TOTAL_DESKS - occupiedCount;
+
+        document.getElementById('floor2Availability').textContent =
+            `${availableCount}/${LIBRARY_TOTAL_DESKS} Desks Available`;
+
+        const dot = document.getElementById('floor2Dot');
+        dot.className = 'status-dot ' + getDotClass(availableCount, LIBRARY_TOTAL_DESKS);
+
+    } catch (err) {
+        document.getElementById('floor2Availability').textContent = 'Unavailable';
+        document.getElementById('floor2Dot').className = 'status-dot dot-gray';
+    }
+}
+
+/* ---- MERIC Floor 3 occupancy ---- */
+async function loadMericFloor3Occupancy() {
+    try {
+        const res = await fetch('/api/occupancy/floorplan/meric_floor3');
+        const data = await res.json();
+
+        const desks = data.desks || {};
+        const occupiedCount = Object.values(desks).filter(d => d.occupied).length;
+        const availableCount = MERIC_FLOOR3_TOTAL_DESKS - occupiedCount;
+
+        document.getElementById('mericFloor3Availability').textContent =
+            `${availableCount}/${MERIC_FLOOR3_TOTAL_DESKS} Desks Available`;
+
+        const dot = document.getElementById('mericFloor3Dot');
+        dot.className = 'status-dot ' + getDotClass(availableCount, MERIC_FLOOR3_TOTAL_DESKS);
+
+    } catch (err) {
+        document.getElementById('mericFloor3Availability').textContent = 'Unavailable';
+        document.getElementById('mericFloor3Dot').className = 'status-dot dot-gray';
+    }
+}
+
+/* ---- Load on page load + refresh every 30s ---- */
+loadFloor2Occupancy();
+loadMericFloor3Occupancy();
+setInterval(loadFloor2Occupancy, 30000);
+setInterval(loadMericFloor3Occupancy, 30000);
     </script>
  
 </body>

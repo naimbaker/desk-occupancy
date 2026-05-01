@@ -75,9 +75,9 @@
     <div class="container">
         {% if session.get('role') == 'admin' %}
 <div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
-    <button id="btn-cam1" class="admin-btn">Show Feed: Desks 1-4</button>
-    <button id="btn-cam2" class="admin-btn">Show Feed: Desks 5-10</button>
-    <button id="btn-cam3" class="admin-btn">Show Feed: Desks 11-14</button>
+    {% for cam_id, label in cameras.items() %}
+    <button id="btn-{{ cam_id }}" class="admin-btn">Show Feed: {{ label }}</button>
+    {% endfor %}
 
 </div>
 
@@ -157,27 +157,27 @@
 <rect id="desk-shape_9" data-desk="Desk 9" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 564.239)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_9" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 133 586.114)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.192383" y="27.7539">Desk 9</tspan></text>
 </g>
-<g id="desk-a" filter="url(#filter15_i_0_1)">
+<g id="desk-10" filter="url(#filter15_i_0_1)">
 <rect id="desk-shape_10" data-desk="Desk 10" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 409.251)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_10" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 125 431.135)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.254883" y="27.7539">Desk 10</tspan></text>
 </g>
-<g id="desk-b" filter="url(#filter16_i_0_1)">
+<g id="desk-11 filter="url(#filter16_i_0_1)">
 <rect id="desk-shape_11" data-desk="Desk 11" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 267.251)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_11" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 126 289.135)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.254883" y="27.7539">Desk 11</tspan></text>
 </g>
-<g id="desk-c" filter="url(#filter17_i_0_1)">
+<g id="desk-12" filter="url(#filter17_i_0_1)">
 <rect id="desk-shape_12" data-desk="Desk 12" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 78.9967 125.251)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_12" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 126 147.135)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.254883" y="27.7539">Desk 12</tspan></text>
 </g>
-<g id="desk-d" filter="url(#filter18_i_0_1)">
+<g id="desk-13" filter="url(#filter18_i_0_1)">
 <rect id="desk-shape_13" data-desk="Desk 13" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2258 2378.25)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_13" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2321 2405.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 13</tspan></text>
 </g>
-<g id="desk-e" filter="url(#filter19_i_0_1)">
+<g id="desk-14" filter="url(#filter19_i_0_1)">
 <rect id="desk-shape_14" data-desk="Desk 14" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2258 2216.25)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_14" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2321 2243.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.169922" y="18.3359">Desk 14</tspan></text>
 </g>
-<g id="desk-f" filter="url(#filter20_i_0_1)">
+<g id="desk-15" filter="url(#filter20_i_0_1)">
 <rect id="desk-shape_15" data-desk="Desk 15" x="1.50327" y="1.49812" width="196.826" height="76.7507" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2258 2054.25)" fill="#00F265" stroke="black" stroke-width="3"/>
 <text id="desk-label_15" transform="matrix(0.999999 -0.00124851 0.00217805 0.999998 2321 2081.1)" fill="black" style="white-space: pre" xml:space="preserve" font-family="Montserrat" font-size="30" letter-spacing="0em"><tspan x="0.155807" y="18.3359">Desk 15&#10;</tspan></text>
 </g>
@@ -746,21 +746,22 @@
     
 <script>
     const socket = io();
-    const cameraDiv = document.getElementById('cameraContainer');
+
+    // Injected by Flask from FLOORPLAN_CAMERAS — no hardcoding needed
+    const FLOOR_CAMERAS = {{ cameras | tojson }};   // { cam_id: label, ... }
+    const CAM_DESKS     = {{ cam_desks | tojson }}; // { cam_id: ['Desk 1', ...], ... }
 
     socket.on('occupancy_update', (data) => {
         console.log("Library received update:", data);
 
-        // Only handle events from cameras that serve this floor
-        const libraryCams = ['cam1', 'cam2', 'cam3'];
-        if (data.camera_id && !libraryCams.includes(data.camera_id)) {
+        // Only process events from cameras assigned to this floor
+        if (!(data.camera_id in FLOOR_CAMERAS)) {
             console.log("Library ignoring event for camera:", data.camera_id);
             return;
         }
 
         Object.keys(data.desks).forEach(deskName => {
             const isOccupied = data.desks[deskName].occupied;
-            // Look up by data-desk attribute — works regardless of desk numbering
             const deskElement = document.querySelector(`[data-desk="${deskName}"]`);
             if (deskElement) {
                 deskElement.setAttribute('fill', isOccupied ? 'red' : '#00F265');
@@ -769,50 +770,42 @@
     });
 
 {% if session.get('role') == 'admin' %}
-            const videoWrapper = document.getElementById('video-wrapper');
-            const videoImg = document.getElementById('active-video-feed');
-            const camLabel = document.getElementById('cam-label');
 
-            function toggleFeed(camId, label) {
-    const videoWrapper = document.getElementById('video-wrapper');
-    const videoImg = document.getElementById('active-video-feed');
-    const camLabel = document.getElementById('cam-label');
+    function toggleFeed(camId, label) {
+        const videoWrapper = document.getElementById('video-wrapper');
+        const videoImg     = document.getElementById('active-video-feed');
+        const camLabel     = document.getElementById('cam-label');
 
-    document.querySelectorAll('rect[id^="desk-shape"]').forEach(rect => {
-        rect.classList.remove('highlight-desk');
-    });
+        // Clear all highlights
+        document.querySelectorAll('[data-desk]').forEach(rect => {
+            rect.classList.remove('highlight-desk');
+        });
 
-    if (videoWrapper.style.display === 'block' && videoImg.src.includes(camId)) {
-        videoWrapper.style.display = 'none';
-        videoImg.src = "";
-    } else {
-        videoWrapper.style.display = 'block';
-        videoImg.src = `/video_feed/${camId}`;
-        camLabel.textContent = "Live View: " + label;
+        // Toggle off if same camera already showing
+        if (videoWrapper.style.display === 'block' && videoImg.src.includes(camId)) {
+            videoWrapper.style.display = 'none';
+            videoImg.src = "";
+        } else {
+            videoWrapper.style.display = 'block';
+            videoImg.src = `/video_feed/${camId}`;
+            camLabel.textContent = "Live View: " + label;
 
-        let start, end;
-        if (camId === 'cam1') {
-            start = 1; end = 4;
-        } else if (camId === 'cam2') {
-            start = 5; end = 10;
-        } else if (camId === 'cam3') {
-            start = 11; end = 14;
-        }
-        for (let i = start; i <= end; i++) {
-            let elementId = (i === 1) ? "desk-shape" : `desk-shape_${i}`;
-            const deskElement = document.getElementById(elementId);
-            if (deskElement) {
-                deskElement.classList.add('highlight-desk');
-            }
+            // Highlight only the desks belonging to this camera
+            const desks = CAM_DESKS[camId] || [];
+            desks.forEach(deskName => {
+                const el = document.querySelector(`[data-desk="${deskName}"]`);
+                if (el) el.classList.add('highlight-desk');
+            });
         }
     }
-}
 
-            document.getElementById('btn-cam1').addEventListener('click', () => toggleFeed('cam1', 'Desks 1-4'));
-            document.getElementById('btn-cam2').addEventListener('click', () => toggleFeed('cam2', 'Desks 5-10'));
-            document.getElementById('btn-cam3').addEventListener('click', () => toggleFeed('cam3', 'Desks 11-14'));
+    // Wire up one listener per camera button — driven entirely from Flask config
+    Object.entries(FLOOR_CAMERAS).forEach(([camId, label]) => {
+        const btn = document.getElementById(`btn-${camId}`);
+        if (btn) btn.addEventListener('click', () => toggleFeed(camId, label));
+    });
 
-        {% endif %}
+{% endif %}
 
 
 
