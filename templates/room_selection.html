@@ -230,8 +230,8 @@
  
             <!-- Clickable banner -->
             <div class="building-banner" onclick="toggleLibrary()">
-                <img src="{{ url_for('static', filename='images/library.png') }}" alt="Main Library" class="building-image">
-                <div class="label-text">F.D. BLUFORD LIBRARY</div>
+                <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Main Library" class="building-image">
+                <div class="label-text">MARTIN COMPLEX</div>
                 <span class="chevron">&#x25BC;</span>
             </div>
  
@@ -273,8 +273,8 @@
  
             <!-- Clickable banner -->
             <div class="building-banner" onclick="toggleMeric()">
-                <img src="{{ url_for('static', filename='images/martin.jpg') }}" alt="Engineering" class="building-image">
-                <div class="label-text">MARTIN ERIC ENGINEERING BUILDING</div>
+                <img src="{{ url_for('static', filename='images/studentcenter.jpg') }}" alt="Engineering" class="building-image">
+                <div class="label-text">STUDENT CENTER</div>
                 <span class="chevron">&#x25BC;</span>
             </div>
  
@@ -290,32 +290,32 @@
                     </div>
                 </div>
  
-                <!-- Floor 2 — no page yet -->
-                <div class="floor-row floor-disabled">
+             
+ 
+                <!-- Floor 3 — live page -->
+                <a href="{{ url_for('meric_floor3') }}" class="floor-row" id="mericFloor3Row">
                     <span class="floor-name">Second Floor</span>
+                    <div class="floor-right">
+                        <span class="floor-availability" id="mericFloor3Availability">Loading…</span>
+                        <span class="status-dot" id="mericFloor3Dot"></span>
+                    </div>
+                </a>
+                   <!-- Floor 2 — no page yet -->
+                <div class="floor-row floor-disabled">
+                    <span class="floor-name">Third Floor</span>
                     <div class="floor-right">
                         <span class="floor-availability">— Coming Soon</span>
                         <span class="status-dot dot-gray"></span>
                     </div>
                 </div>
  
-                <!-- Floor 3 — live page -->
-                <a href="{{ url_for('meric_floor3') }}" class="floor-row" id="mericFloor3Row">
-                    <span class="floor-name">Third Floor</span>
-                    <div class="floor-right">
-                        <span class="floor-availability" id="mericFloor3Availability">Loading…</span>
-                        <span class="status-dot" id="mericFloor3Dot"></span>
-                    </div>
-                </a>
- 
             </div>
         </div>
  
-        <!-- ===== STUDENT CENTER ===== -->
         <div class="building-card disabled-btn">
             <div class="building-banner" style="cursor:not-allowed;">
-                <img src="{{ url_for('static', filename='images/studentcenter.jpg') }}" alt="Student Center" class="building-image">
-                <div class="label-text">STUDENT CENTER</div>
+                <img src="{{ url_for('static', filename='images/library.png') }}" alt="Student Center" class="building-image">
+                <div class="label-text">F.D. BLUFORD LIBRARY</div>
             </div>
         </div>
  
